@@ -5,7 +5,7 @@ public class MockPaymentSystem implements PaymentSystem {
     @Override
     public boolean processPayment(int numTickets, String eventTitle, String studentEmail, int studentPhone, String epEmail,
                            double transactionAmount){
-        return true;
+        return true; // assuming everything succeeds
     }
 
     @Override
