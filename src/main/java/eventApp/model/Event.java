@@ -47,8 +47,12 @@ public class Event {
     public Performance createPerformance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, Collection<String> performerNames,
                                          String venueAddress, int venueCapacity, boolean venueisOutdoors, boolean venueAllowsSmoking,
                                          int numTickets, double ticketPrice ) {
+        System.out.println("DEBUG - createPerformance called");
+        System.out.println("DEBUG - performances size before: " + performances.size());
+
         //check for time clash
         if(hasPerformanceAtSameTimes(startDateTime, endDateTime)) {
+            System.out.println("DEBUG - clash detected!");
             return null;
         }
 
@@ -56,10 +60,16 @@ public class Event {
                venueCapacity, venueisOutdoors, venueAllowsSmoking, numTickets, ticketPrice);
 
        addPerformance(p);
+        System.out.println("DEBUG - performances size after: " + performances.size());
        return p;
     }
 
     public Performance getPerformanceByID(long performanceID) {
+        for(Performance p : performances) {
+            if(p.getPerformanceID() == performanceID) {
+                return p;
+            }
+        };
         return null;
     }
 
@@ -84,11 +94,37 @@ public class Event {
     }
 
     public double getAverageRatingOfPerformances(){
-        return 0;
+        int totalRating = 0;
+        int i = 0;
+
+        for (Performance p : performances) {
+            for(int rating : p.getReviewRatings()){
+                totalRating += rating;
+                i ++;
+            }
+        }
+        //prevent zero division
+        if(i == 0){
+            return 0.0;
+        }
+
+        return (double) totalRating / i;
     }
 
     public Collection<String> getAllPerformanceReviews(){
-        return null;
+        Collection<String> reviews = new ArrayList<>();
+
+        for (Performance p : performances) {
+            List<Integer> ratings = new ArrayList<>(p.getReviewRatings());
+            List<String> comments = new ArrayList<>(p.getReviewComments());
+
+            for(int i = 0; i < ratings.size(); i++){
+                reviews.add("Performance ID: " + p.getPerformanceID() +
+                        " Rating: " + ratings.get(i) +
+                        " Comment: " + comments.get(i));
+            }
+        }
+        return reviews;
     }
 
     private boolean hasPerformanceAtSameTimes(LocalDateTime startDateTime, LocalDateTime endDateTime) {
@@ -102,6 +138,7 @@ public class Event {
     }
 
     private void addPerformance(Performance p){
+        performances.add(p);
     }
 
     public String toString() {

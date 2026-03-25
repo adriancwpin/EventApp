@@ -163,7 +163,30 @@ public class EventPerformanceController extends Controller{
         view.displayListOfPerformances(searched);
     }
 
-    public void viewPerformance(){}
+    public void viewPerformance(){
+        //give performanceID
+        //if incorrect ID, system asks for it again
+        Performance performance = null;
+        while(performance == null){
+            try{
+                long performanceID = Long.parseLong(view.getInput("Enter PerformanceID: "));
+
+                performance = getPerformanceByID(performanceID);
+                if(performance == null){
+                    view.displayError("Performance ID not found, please try again.");
+                }
+            } catch (NumberFormatException e) {
+                view.displayError("Invalid ID, please enter a number.");
+            }
+        }
+        //choose the event based on the performanceID
+        Event event = getEventByPerformanceID(performance.getPerformanceID());
+
+        //if incorrect ID, system asks for it again
+        //give all the details of that specific performance
+        //ticket availability, event average review, list of individual reviews
+        view.displaySpecificPerformance(buildPerformanceInfo(performance, event));
+    }
 
     public void cancelPerformance(){}
 
@@ -173,7 +196,9 @@ public class EventPerformanceController extends Controller{
 
     public void sponsorPerformance(){}
 
-    private void addEvent(Event e){}
+    private void addEvent(Event e){
+        events.add(e);
+    }
 
     private void addPerformance(Performance p){
         performances.add(p);
@@ -191,6 +216,65 @@ public class EventPerformanceController extends Controller{
         return null;
     }
 
+    //for view performance
+    private String buildPerformanceInfo(Performance performance, Event event){
+        StringBuilder sb = new StringBuilder();
+
+        //event details
+        sb.append("===EVENT DETAILS===\n");
+        sb.append("Event Title: ").append(event.getTitle()).append("\n");
+        sb.append("Event Type: ").append(event.getType()).append("\n");
+        sb.append("Organiser Email: ").append(event.getOrganiserEmail()).append("\n");
+
+        //performance details
+        sb.append("=== Performance Details ===\n");
+        sb.append("Performance ID: ").append(performance.getPerformanceID()).append("\n");
+        sb.append("Start Time: ").append(performance.getStartDateTime()).append("\n");
+        sb.append("End Time: ").append(performance.getEndDateTime()).append("\n");
+        sb.append("Venue: ").append(performance.getVenueAddress()).append("\n");
+        sb.append("Venue Capacity: ").append(performance.getVenueCapacity()).append("\n");
+        sb.append("Outdoors: ").append(performance.isVenueIsOutdoors()).append("\n");
+        sb.append("Smoking: ").append(performance.isVenueAllowsSmoking()).append("\n");
+        sb.append("Performers: ").append(performance.getPerformerName()).append("\n");
+        sb.append("Status: ").append(performance.getStatus()).append("\n");
+
+        //ticket availability
+        if(event.isTicketed()){
+            sb.append("\n=== Ticket Details ===\n");
+            sb.append("Number of Ticket Available: ").append(performance.getNumTicketsTotal() -
+                    performance.getNumTicketsSold()).append("\n");
+            sb.append("Ticket Price: ").append(performance.getTicketPrice()).append("\n");
+        }
+
+        //average event rating
+        sb.append("\n=== Review ===\n");
+        sb.append("Average Rating: "). append(event.getAverageRatingOfPerformances()).append("\n");
+
+        //individual reviews
+        sb.append("\n=== Individual Reviews ===\n");
+        Collection<String> reviews = event.getAllPerformanceReviews();
+        if(reviews.isEmpty()){
+            sb.append("No comment for this event.\n");
+        } else{
+            for(String review: reviews){
+                sb.append(review).append("\n");
+            }
+        }
+
+        return sb.toString(); //convert StringBuilder to String
+    }
+    private Event getEventByPerformanceID(long performanceID){
+        System.out.println("Events size: " + events.size()); // check if events is empty
+
+        for(Event event: events){
+            System.out.println("Checking event: " + event.getTitle()); // check each event
+            System.out.println("Performance result: " + event.getPerformanceByID(performanceID)); // check if performance found
+            if(event.getPerformanceByID(performanceID) != null){
+                return event;
+            }
+        }
+        return null;
+    }
 
     private Event getEventByTitle(String title){
         for(Event e : events){
@@ -220,10 +304,10 @@ public class EventPerformanceController extends Controller{
         for (String p : performance){
             //check if performance match the preferences
             if((preferences.preferMusicEvents && p.contains("MUSIC")) ||
-                    (preferences.preferMusicEvents && p.contains("THEATRE")) ||
-                    (preferences.preferMusicEvents && p.contains("DANCE")) ||
-                    (preferences.preferMusicEvents && p.contains("MOVIE")) ||
-                    (preferences.preferMusicEvents && p.contains("SPORTS"))){
+                    (preferences.preferTheatreEvents && p.contains("THEATRE")) ||
+                    (preferences.preferDanceEvents && p.contains("DANCE")) ||
+                    (preferences.preferMovieEvents && p.contains("MOVIE")) ||
+                    (preferences.preferSportsEvents && p.contains("SPORTS"))){
                 preferred.add(p);
             }else{
                 others.add(p);
