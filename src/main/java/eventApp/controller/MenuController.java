@@ -23,8 +23,6 @@ public class MenuController extends Controller {
     private Collection<Booking> bookings;
     private Collection<Performance>performances;
 
-    private User currentUser;
-
     private View view;
     private PaymentSystem paymentSystem;
     private VerificationService verificationService;
@@ -42,12 +40,32 @@ public class MenuController extends Controller {
         this.currentUser = null; // no one logged in at start
 
         //initialise all controllers and shared resources
-        this.userController = new UserController(users, currentUser, view, verificationService);
-        this.eventPerformanceController = new EventPerformanceController(events, performances, currentUser, view, paymentSystem);
-        this.bookingController = new BookingController(bookings, performances, currentUser, view, paymentSystem);
+        this.userController = new UserController(users, view, verificationService);
+        this.eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystem);
+        this.bookingController = new BookingController(bookings, performances,view, paymentSystem);
     }
 
-    public void mainMenu() {}
+    /**
+     * Keep the app running in a loop
+     * Check who is currently logged in
+     * Show the right menu based on the user
+     * Exit the loop only when the user logged out
+     */
+    public void mainMenu() {
+        boolean running = true;
+
+        while (running) {
+            if (checkCurrentUserIsGuest()){
+                handleGuestMainMenu();
+            } else if (checkCurrentUserIsAdmin()) {
+                handleAdminStaffMainMenu();
+            } else if (checkCurrentUserIsEntertainmentProvider()){
+                handleEntertainmentProviderMainMenu();
+            } else if (checkCurrentUserIsStudent()){
+                handleStudentMainMenu();
+            }
+        }
+    }
 
     private boolean handleGuestMainMenu(){
         return false;

@@ -1,8 +1,11 @@
 package eventApp.controller;
 
 import java.util.Collection;
+import eventApp.model.User;
 
 public abstract class Controller{
+    protected User currentUser;
+
     /**
      * Checks if the currently logged-in user has Admin privileges.
      * @return true if the user is an admin, false otherwise.

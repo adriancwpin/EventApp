@@ -6,22 +6,20 @@ import eventApp.view.*;
 import java.util.Collection;
 
 
-public class BookingController {
+public class BookingController extends Controller {
     private long nextBookingNumber;
 
     private Collection<Booking> bookings;
     private Collection<Performance> performances;
-    private User currentUser;
     private View view;
     private PaymentSystem paymentSystem;
 
     //Constructor
     public BookingController(Collection<Booking> bookings, Collection<Performance> performances,
-                             User currentUser, View view, PaymentSystem paymentSystem) {
+                             View view, PaymentSystem paymentSystem) {
         this.nextBookingNumber = 1;
         this.bookings = bookings;
         this.performances = performances;
-        this.currentUser = currentUser;
         this.view = view;
         this.paymentSystem = paymentSystem;
     }

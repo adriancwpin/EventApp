@@ -17,13 +17,11 @@ public class UserController extends Controller {
 
     //shared resources based on the dependancy on class diagram
     private Collection<User> user;
-    private User currentUser;
     private View view;
     private VerificationService verificationService;
 
-    public UserController(Collection<User> user, User currentUser, View view, VerificationService verificationService) {
+    public UserController(Collection<User> user, View view, VerificationService verificationService) {
         this.user = user;
-        this.currentUser = currentUser;
         this.view = view;
         this.verificationService = verificationService;
         adadPreregisteredUsers();
