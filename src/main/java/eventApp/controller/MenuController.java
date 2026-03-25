@@ -4,8 +4,7 @@ import eventApp.external.PaymentSystem;
 import eventApp.external.VerificationService;
 import eventApp.model.*;
 import eventApp.view.*;
-import eventApp.enums.*;
-import eventApp.external.*;
+import java.util.ArrayList;
 
 
 import java.util.ArrayList;
@@ -24,8 +23,6 @@ public class MenuController extends Controller {
     private Collection<Booking> bookings;
     private Collection<Performance>performances;
 
-    private User currentUser;
-
     private View view;
     private PaymentSystem paymentSystem;
     private VerificationService verificationService;
@@ -43,15 +40,38 @@ public class MenuController extends Controller {
         this.currentUser = null; // no one logged in at start
 
         //initialise all controllers and shared resources
-        this.userController = new UserController(users, currentUser, view, verificationService);
-        this.eventPerformanceController = new EventPerformanceController(events, performances, currentUser, view, paymentSystem);
-        this.bookingController = new BookingController(bookings, performances, currentUser, view, paymentSystem);
+        this.userController = new UserController(users,view,verificationService);
+        this.eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystem);
+        this.bookingController = new BookingController(bookings, performances,view, paymentSystem);
     }
 
-    public void mainMenu() {}
+    /**
+     * Keep the app running in a loop
+     * Check who is currently logged in
+     * Show the right menu based on the user
+     * Exit the loop only when the user logged out
+     */
+    public void mainMenu() {
+        boolean running = true;
+
+        while (running) {
+            if (checkCurrentUserIsGuest()){
+                running = handleGuestMainMenu();
+            } else if (checkCurrentUserIsAdmin()) {
+                running = handleAdminStaffMainMenu();
+            } else if (checkCurrentUserIsEntertainmentProvider()){
+                running = handleEntertainmentProviderMainMenu();
+            } else if (checkCurrentUserIsStudent()){
+                running = handleStudentMainMenu();
+            }
+        }
+    }
 
     private boolean handleGuestMainMenu(){
-        return false;
+        System.out.println("===[Guest Menu]===");
+        System.out.println("1. LOGIN");
+        System.out.println("2. REGISTER");
+        return true; //keep the app running
     }
 
     private boolean handleStudentMainMenu(){
