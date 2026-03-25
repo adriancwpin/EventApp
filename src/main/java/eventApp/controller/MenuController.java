@@ -4,8 +4,7 @@ import eventApp.external.PaymentSystem;
 import eventApp.external.VerificationService;
 import eventApp.model.*;
 import eventApp.view.*;
-import eventApp.enums.*;
-import eventApp.external.*;
+import java.util.ArrayList;
 
 
 import java.util.ArrayList;
