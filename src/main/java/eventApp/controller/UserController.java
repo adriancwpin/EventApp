@@ -69,9 +69,47 @@ public class UserController extends Controller {
         view.displaySuccess("You have been logged out successfully.");
     }
 
-    public void registerEntertainmentProvider() {}
+    public void registerEntertainmentProvider() {
+        //Ask for EP details eg orgName
+        String orgName = view.getInput("Enter organisation name: ");
+        String businessNumber = view.getInput("Enter business number: ");
+        String name = view.getInput("Enter name: ");
+        String description = view.getInput("Enter description: ");
+        String email = view.getInput("Enter email: ");
+        String password = view.getInput("Enter password: ");
+
+        //check if account already exits
+        if (EPAccountAlreadyExists(email,orgName, businessNumber)){
+            view.displayError("This account already exists!");
+            return;
+        }
+
+        //verify business number via verification system
+        if(!verificationService.verifyEntertainmentProvider(businessNumber)){
+            view.displayError("Business number is not verified!");
+            return;
+        }
+
+        //create new account that new EP
+        EntertainmentProvider entertainmentProvider = new EntertainmentProvider(email, password, orgName, businessNumber,
+                name, description);
+
+        addUser(entertainmentProvider);
+
+        //display success
+        view.displaySuccess("Entertainment Provider registered successfully!");
+    }
 
     private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
+        //Go through every user and check
+        for(User user : users) {
+            if(user instanceof EntertainmentProvider ep) {
+                if(ep.getEmail().equals(email) && ep.getOrgName().equals(orgName)
+                && ep.getBusinessNumber().equals(businessNumber)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -84,6 +122,11 @@ public class UserController extends Controller {
     private void addPreregisteredUsers() {
         //test log in
         addUser(new Student("John", 012345 , "student@test.com","password123"));
+        // test EP
+        addUser(new EntertainmentProvider(
+                "Music Corp", "BN12345678", "Smith", "We organise music events",
+                "ep@test.com", "ep123"
+            ));
     }
 
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {

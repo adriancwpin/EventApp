@@ -23,12 +23,7 @@ public class EventPerformanceController extends Controller{
         this.nextEventID = 1;
         this.nextPerformanceID = 1;
     }
-
-    //Getters
-    public User getCurentUser(){
-        return currentUser;
-    }
-
+    
     //Methods
     public Event createEvent() {
         return null;
