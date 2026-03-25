@@ -40,9 +40,9 @@ public class MenuController extends Controller {
         this.currentUser = null; // no one logged in at start
 
         //initialise all controllers and shared resources
-        this.userController = new UserController(users,verificationService);
-        this.eventPerformanceController = new EventPerformanceController(events, performances, paymentSystem);
-        this.bookingController = new BookingController(bookings, performances,paymentSystem);
+        this.userController = new UserController(users,view,verificationService);
+        this.eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystem);
+        this.bookingController = new BookingController(bookings, performances,view, paymentSystem);
     }
 
     /**
@@ -56,19 +56,22 @@ public class MenuController extends Controller {
 
         while (running) {
             if (checkCurrentUserIsGuest()){
-                handleGuestMainMenu();
+                running = handleGuestMainMenu();
             } else if (checkCurrentUserIsAdmin()) {
-                handleAdminStaffMainMenu();
+                running = handleAdminStaffMainMenu();
             } else if (checkCurrentUserIsEntertainmentProvider()){
-                handleEntertainmentProviderMainMenu();
+                running = handleEntertainmentProviderMainMenu();
             } else if (checkCurrentUserIsStudent()){
-                handleStudentMainMenu();
+                running = handleStudentMainMenu();
             }
         }
     }
 
     private boolean handleGuestMainMenu(){
-        return false;
+        System.out.println("===[Guest Menu]===");
+        System.out.println("1. LOGIN");
+        System.out.println("2. REGISTER");
+        return true; //keep the app running
     }
 
     private boolean handleStudentMainMenu(){

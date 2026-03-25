@@ -14,10 +14,11 @@ public class EventPerformanceController extends Controller{
     private PaymentSystem paymentSystem;
 
     //Constructor
-    public EventPerformanceController(Collection<Event> events, Collection<Performance> performances,
+    public EventPerformanceController(Collection<Event> events, Collection<Performance> performances,View view,
                                       PaymentSystem paymentSystem) {
         this.events = events;
         this.performances = performances;
+        this.view = view;
         this.paymentSystem = paymentSystem;
         this.nextEventID = 1;
         this.nextPerformanceID = 1;

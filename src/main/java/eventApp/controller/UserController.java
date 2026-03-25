@@ -16,13 +16,14 @@ public class UserController extends Controller {
     public static final String PREREGISTERED_ADMIN_FILE_PATH = "resources/preregistered_admin.txt";
 
     //shared resources based on the dependancy on class diagram
-    private Collection<User> user;
+    private Collection<User> users;
     private VerificationService verificationService;
 
-    public UserController(Collection<User> user,VerificationService verificationService) {
-        this.user = user;
+    public UserController(Collection<User> user,View view, VerificationService verificationService) {
+        this.users = users;
+        this.view = view;
         this.verificationService = verificationService;
-        adadPreregisteredUsers();
+        addPreregisteredUsers();
     }
 
     //Getters
@@ -32,9 +33,33 @@ public class UserController extends Controller {
 
 
     //Methods
-    public void login() {}
 
-    public void logout() {}
+    /**
+     * Prompt the users to log them into the system.
+     * If a match is found in the user records, the current session user is updated
+     * and a success message is displayed. Otherwise, an error is shown.
+     */
+    public void login() {
+        String email = view.getInput("Enter email: ");
+        String password = view.getInput("Enter password: ");
+
+        for (User user : users) {
+            if(user.getEmail().equals(email) && user.getPassword().equals(password)) {
+                this.currentUser = user;
+                view.displaySuccess("Welcome to the Event App!");
+                return;
+            }
+        }
+        //No match found
+        view.displayError("Invalid email or password!");
+    }
+
+    /**
+     *
+     */
+    public void logout() {
+
+    }
 
     public void registerEntertainmentProvider() {}
 
@@ -44,9 +69,14 @@ public class UserController extends Controller {
 
     public void editPreferences(){}
 
-    private void addUser(User user) {}
+    private void addUser(User user) {
+        users.add(user);
+    }
 
-    private void adadPreregisteredUsers() {}
+    private void addPreregisteredUsers() {
+        //test log in
+        addUser(new Student("John", 012345 , "student@test.com","password123"));
+    }
 
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
         return null;
