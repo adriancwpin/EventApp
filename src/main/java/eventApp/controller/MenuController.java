@@ -40,9 +40,9 @@ public class MenuController extends Controller {
         this.currentUser = null; // no one logged in at start
 
         //initialise all controllers and shared resources
-        this.userController = new UserController(users, view, verificationService);
-        this.eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystem);
-        this.bookingController = new BookingController(bookings, performances,view, paymentSystem);
+        this.userController = new UserController(users,verificationService);
+        this.eventPerformanceController = new EventPerformanceController(events, performances, paymentSystem);
+        this.bookingController = new BookingController(bookings, performances,paymentSystem);
     }
 
     /**

@@ -11,16 +11,14 @@ public class BookingController extends Controller {
 
     private Collection<Booking> bookings;
     private Collection<Performance> performances;
-    private View view;
     private PaymentSystem paymentSystem;
 
     //Constructor
     public BookingController(Collection<Booking> bookings, Collection<Performance> performances,
-                             View view, PaymentSystem paymentSystem) {
+                             PaymentSystem paymentSystem) {
         this.nextBookingNumber = 1;
         this.bookings = bookings;
         this.performances = performances;
-        this.view = view;
         this.paymentSystem = paymentSystem;
     }
 

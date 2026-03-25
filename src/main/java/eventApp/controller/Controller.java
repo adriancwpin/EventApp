@@ -1,30 +1,33 @@
 package eventApp.controller;
 
 import java.util.Collection;
-import eventApp.model.User;
+
+import eventApp.model.*;
+import eventApp.view.View;
 
 public abstract class Controller{
     protected User currentUser;
+    protected View view;
 
     /**
      * Checks if the currently logged-in user has Admin privileges.
      * @return true if the user is an admin, false otherwise.
      */
 
-    protected boolean checkCurrentUserIsAdmin(){
-        return false;
+    protected boolean checkCurrentUserIsGuest(){
+        return currentUser == null;
     }
 
-    protected boolean checkCurrentUserIsGuest(){
-        return false;
+    protected boolean checkCurrentUserIsAdmin(){
+        return currentUser instanceof AdminStaff;
     }
 
     protected boolean checkCurrentUserIsStudent(){
-        return false;
+        return currentUser instanceof Student;
     }
 
     protected boolean checkCurrentUserIsEntertainmentProvider(){
-        return false;
+        return currentUser instanceof EntertainmentProvider;
     }
 
     /**
@@ -37,6 +40,19 @@ public abstract class Controller{
      */
 
     protected <T> int selectFromMenu(Collection<T> options,  String prompt){
-        return 0;
+        System.out.println(prompt);
+        int count = 1;
+        for (T option : options){
+            System.out.println(count + "." + option);
+            count++;
+        }
+
+        //choose the options
+        int choice = Integer.parseInt(view.getInput("Enter Choice: "));
+        if (choice < 1 || choice > options.size()){
+            view.displayError("Invalid Choice. please try again.");
+            return selectFromMenu(options, prompt);
+        }
+        return choice;
     }
 }
