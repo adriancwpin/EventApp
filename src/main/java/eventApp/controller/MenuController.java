@@ -50,6 +50,12 @@ public class MenuController extends Controller {
         boolean running = true;
 
         while (running) {
+            //sync currentUSer from UserController
+            currentUser = userController.getCurrentUser();
+
+            eventPerformanceController.setCurrentUser(currentUser);
+            bookingController.setCurrentUser(currentUser);
+
             if (checkCurrentUserIsGuest()){
                 running = handleGuestMainMenu();
             } else if (checkCurrentUserIsAdmin()) {

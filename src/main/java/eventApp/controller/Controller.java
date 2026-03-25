@@ -30,6 +30,10 @@ public abstract class Controller{
         return currentUser instanceof EntertainmentProvider;
     }
 
+    public void setCurrentUser(User user){
+        this.currentUser = user;
+    }
+
     /**
      * Display a menu of options to the user and capture their selection.
      *

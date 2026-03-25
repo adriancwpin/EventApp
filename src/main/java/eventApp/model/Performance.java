@@ -1,6 +1,7 @@
 package eventApp.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import eventApp.enums.PerformanceStatus;
 
@@ -23,7 +24,7 @@ public class Performance {
     private PerformanceStatus status;
 
     public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, Collection<String> performerName, String venueAddress, int venueCapacity,
-                       boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTicketsTotal, int numTicketsSold, double ticketPrice, boolean isSponsored, double sponsoredAmount, Collection<String> reviewComments, Collection<Integer> reviewRatings, PerformanceStatus status) {
+                       boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTicketsTotal, double ticketPrice) {
         this.performanceID = performanceID;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -33,13 +34,13 @@ public class Performance {
         this.venueIsOutdoors = venueIsOutdoors;
         this.venueAllowsSmoking = venueAllowsSmoking;
         this.numTicketsTotal = numTicketsTotal;
-        this.numTicketsSold = numTicketsSold;
+        this.numTicketsSold = 0;
         this.ticketPrice = ticketPrice;
-        this.isSponsored = isSponsored;
-        this.sponsoredAmount = sponsoredAmount;
-        this.reviewComments = reviewComments;
-        this.reviewRatings = reviewRatings;
-        this.status = status;
+        this.isSponsored = false;
+        this.sponsoredAmount = 0.0;
+        this.reviewComments = new ArrayList<>();
+        this.reviewRatings = new ArrayList<>();
+        this.status = PerformanceStatus.ACTIVE;
     }
 
     //getters
