@@ -129,7 +129,39 @@ public class EventPerformanceController extends Controller{
         return event;
     }
 
-    public void searchForPerformances(){}
+    public void searchForPerformances(){
+        //ask for a date to search
+        LocalDateTime searchDate = null;
+        while(searchDate == null){
+            try{
+                String date = view.getInput("Enter Search Date (yyyy-MM-ddTHH:mm): ");
+                searchDate = LocalDateTime.parse(date);
+            } catch (DateTimeParseException e){
+                view.displayError("Invalid date/time format. Please use yyyy-MM-ddTHH:mm format.");
+            }
+        }
+        //search all events for performances on that date
+        Collection<String> searched  = new ArrayList<>();
+
+        for (Event e: events){
+            Collection<String> performanceOnDate = e.getInfoOfPerformancesOnDate(searchDate);
+            searched.addAll(performanceOnDate);
+        }
+
+        //case where no performance is found
+        if(searched.isEmpty()){
+            view.displayError("No performances found on this date!");
+            return;
+        }
+        //if student then sort their preferences first
+        if(checkCurrentUserIsStudent()) {
+            Student student = (Student) currentUser;
+            searched = sortByStudentPreferences(student, searched);
+        }
+        //if EP/Admin, then just show everything
+        //display the performance list
+        view.displayListOfPerformances(searched);
+    }
 
     public void viewPerformance(){}
 
@@ -170,6 +202,36 @@ public class EventPerformanceController extends Controller{
     }
 
     private Performance getPerformanceByID(long PerformanceID){
+        for (Performance p: performances){
+            if(p.getPerformanceID() == PerformanceID){
+                return p;
+            }
+        }
         return null;
+    }
+
+    private Collection<String> sortByStudentPreferences(Student student, Collection<String> performance){
+        //get student preferences
+        StudentPreferences preferences = student.getPreferences();
+
+        Collection<String> preferred = new ArrayList<>();
+        Collection<String> others = new ArrayList<>();
+
+        for (String p : performance){
+            //check if performance match the preferences
+            if((preferences.preferMusicEvents && p.contains("MUSIC")) ||
+                    (preferences.preferMusicEvents && p.contains("THEATRE")) ||
+                    (preferences.preferMusicEvents && p.contains("DANCE")) ||
+                    (preferences.preferMusicEvents && p.contains("MOVIE")) ||
+                    (preferences.preferMusicEvents && p.contains("SPORTS"))){
+                preferred.add(p);
+            }else{
+                others.add(p);
+            }
+        }
+
+        //preferred first then others
+        preferred.addAll(others);
+        return preferred;
     }
 }

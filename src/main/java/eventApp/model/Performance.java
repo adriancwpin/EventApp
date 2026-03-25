@@ -154,7 +154,14 @@ public class Performance {
     public void addBooking(Booking b){}
 
     public String toString(){
-        return null;
+        return "Performance ID: " + performanceID +
+                " | Start: " + startDateTime +
+                " | End: " + endDateTime +
+                " | Venue: " + venueAddress +
+                " | Capacity: " + venueCapacity +
+                " | Number Ticket Available: " + (numTicketsTotal - numTicketsSold) +
+                " | Ticket Price: " + ticketPrice +
+                " | Status: " + status;
     }
 
 }

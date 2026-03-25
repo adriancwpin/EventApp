@@ -64,7 +64,15 @@ public class Event {
     }
 
     public Collection<String> getInfoOfPerformancesOnDate(LocalDateTime searchtDateTime) {
-        return null;
+        Collection<String> searched = new ArrayList<>();
+
+        for (Performance p : performances) {
+            //check if performance is on the same date
+            if(p.getStartDateTime().toLocalDate().equals(searchtDateTime.toLocalDate())) {
+                searched.add(p.toString());
+            }
+        }
+        return searched;
     }
 
     private String getOrganiserName(){
@@ -93,7 +101,8 @@ public class Event {
         return false;
     }
 
-    private void addPerformance(Performance p){}
+    private void addPerformance(Performance p){
+    }
 
     public String toString() {
         return null;
