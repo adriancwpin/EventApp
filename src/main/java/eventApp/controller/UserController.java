@@ -20,7 +20,7 @@ public class UserController extends Controller {
     private VerificationService verificationService;
 
     public UserController(Collection<User> user,View view, VerificationService verificationService) {
-        this.users = users;
+        this.users = user;
         this.view = view;
         this.verificationService = verificationService;
         addPreregisteredUsers();
@@ -55,10 +55,18 @@ public class UserController extends Controller {
     }
 
     /**
-     *
+     * nobody is logged in when the currentUser is null
+     * display success message
      */
     public void logout() {
+        if(currentUser != null) {
+            view.displayError("No user logged in.");
+        }
 
+        //set currentUser to null
+        this.currentUser = null;
+
+        view.displaySuccess("You have been logged out successfully.");
     }
 
     public void registerEntertainmentProvider() {}
