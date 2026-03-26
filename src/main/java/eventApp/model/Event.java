@@ -47,12 +47,9 @@ public class Event {
     public Performance createPerformance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, Collection<String> performerNames,
                                          String venueAddress, int venueCapacity, boolean venueisOutdoors, boolean venueAllowsSmoking,
                                          int numTickets, double ticketPrice ) {
-        System.out.println("DEBUG - createPerformance called");
-        System.out.println("DEBUG - performances size before: " + performances.size());
 
         //check for time clash
         if(hasPerformanceAtSameTimes(startDateTime, endDateTime)) {
-            System.out.println("DEBUG - clash detected!");
             return null;
         }
 
@@ -60,7 +57,6 @@ public class Event {
                venueCapacity, venueisOutdoors, venueAllowsSmoking, numTickets, ticketPrice);
 
        addPerformance(p);
-        System.out.println("DEBUG - performances size after: " + performances.size());
        return p;
     }
 
