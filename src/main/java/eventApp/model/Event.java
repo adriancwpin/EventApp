@@ -13,13 +13,15 @@ public class Event {
     private EventType type;
     private boolean isTicketed;
     private List<Performance> performances;
+    private String organiserEmail;
 
-    public Event(long eventID, String title, EventType type, boolean isTicketed) {
+    public Event(long eventID, String title, EventType type, boolean isTicketed,String organiserEmail) {
         this.eventID = eventID;
         this.title = title;
         this.type = type;
         this.isTicketed = isTicketed;
         this.performances = new ArrayList<Performance>();
+        this.organiserEmail = organiserEmail;
     }
 
     public long getEventID() { return eventID; }
@@ -56,6 +58,7 @@ public class Event {
        Performance p = new Performance(performanceID, startDateTime, endDateTime, performerNames, venueAddress,
                venueCapacity, venueisOutdoors, venueAllowsSmoking, numTickets, ticketPrice);
 
+       p.setEvent(this); //so the performance know which event it belongs to
        addPerformance(p);
        return p;
     }
@@ -86,7 +89,7 @@ public class Event {
     };
 
     public String getOrganiserEmail(){
-        return null;
+        return organiserEmail;
     }
 
     public double getAverageRatingOfPerformances(){

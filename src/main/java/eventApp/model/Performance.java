@@ -22,6 +22,7 @@ public class Performance {
     private Collection<String> reviewComments;
     private Collection<Integer> reviewRatings;
     private PerformanceStatus status;
+    private Event event;
 
     public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, Collection<String> performerName, String venueAddress, int venueCapacity,
                        boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTicketsTotal, double ticketPrice) {
@@ -46,6 +47,14 @@ public class Performance {
     //getters
     public long getPerformanceID() {
         return performanceID;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Event getEvent() {
+        return event;
     }
 
     public LocalDateTime getStartDateTime() {
@@ -108,15 +117,20 @@ public class Performance {
         return status;
     }
 
+    public void setNumTicketsSold(int numTicketsSold) {
+        this.numTicketsSold = numTicketsSold;
+    }
+
     //methods
     public void cancel(){}
 
     public boolean checkIfEventIsTicketed(){
-        return false; //default, can be changed later on
+        Event event = getEvent();
+        return event.isTicketed();
     }
 
-    public boolean checkIfTicketsLeft(int numTicketsToBuy){
-        return false;
+    public boolean checkIfTicketsLeft(int numTicketsRequested){
+        return (numTicketsTotal - numTicketsSold) >= numTicketsRequested;
     }
 
     public double getFinalTicketPrice() {
@@ -124,11 +138,11 @@ public class Performance {
     }
 
     public String getOrganiserEmail(){
-        return null;
+        return event.getOrganiserEmail();
     }
 
     public String getEventTitle(){
-        return null;
+        return event.getTitle();
     }
 
     public boolean checkHasNotHappenedYet(){
@@ -163,5 +177,6 @@ public class Performance {
                 " | Ticket Price: " + ticketPrice +
                 " | Status: " + status;
     }
+
 
 }
