@@ -48,6 +48,10 @@ public class Booking {
     }
 
     public String generateBookingRecord(){
-        return null;
+        return "Booking Number: " + bookingNumber + "\n" +
+                "Number of Tickets: " + numTickets + "\n" +
+                "Amount Paid: £" + amountPaid + "\n" +
+                "Booking DateTime: " + bookingDateTime + "\n" +
+                "Status: " + status;
     }
 }

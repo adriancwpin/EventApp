@@ -40,6 +40,8 @@ public class EventPerformanceController extends Controller{
             return null;
         }
 
+        EntertainmentProvider ep = (EntertainmentProvider)currentUser;
+
         //ask for event details(title, type, isTicketed)
         String title = view.getInput("Enter Event Title: ");
 
@@ -54,7 +56,7 @@ public class EventPerformanceController extends Controller{
         boolean isTicketed = ticketed.equalsIgnoreCase("Y");
 
         //create new Event with nextEVentID
-        Event event = new Event(nextEventID, title, selectedEvent, isTicketed);
+        Event event = new Event(nextEventID, title, selectedEvent, isTicketed, ep.getEmail());
         nextEventID++;
 
        //ask how many performances
@@ -100,7 +102,7 @@ public class EventPerformanceController extends Controller{
             Collection<String> performerNames = new ArrayList<>();
 
             for(int j = 0; j < numPerformers; j++){
-                performerNames.add(view.getInput("Enter Performance " + (j + 1) + "name: "));
+                performerNames.add(view.getInput("Enter Performance " + (j + 1) + " name: "));
             }
 
             //ticket details if ticketed
@@ -122,7 +124,6 @@ public class EventPerformanceController extends Controller{
 
         //add event to collection
         addEvent(event);
-        EntertainmentProvider ep = (EntertainmentProvider) currentUser;
         ep.addEvent(event);
 
         view.displaySuccess("Event '" + title + "' created successfully!");

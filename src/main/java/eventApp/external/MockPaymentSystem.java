@@ -21,7 +21,7 @@ public class MockPaymentSystem implements PaymentSystem {
         }
         System.out.print(ANSI_CYAN);
         System.out.println("Student with email " + studentEmail + " and phone number " + studentPhone +
-                "has purchased " + numTickets + " tickets for the event " + eventTitle + " ran by the provider with email " +
+                " has purchased " + numTickets + " tickets for the event " + eventTitle + " ran by the provider with email " +
                 epEmail + " totalling £" + transactionAmount);
         System.out.print(ANSI_RESET);
         return true;
