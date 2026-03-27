@@ -200,7 +200,7 @@ public class UserController extends Controller {
 
     private void addPreregisteredUsers() {
         //test log in
-        addUser(new Student("John", 012345 , "student@test.com","password123"));
+        addUser(new Student("student@test.com", "password123", "John", 123456));
         // test EP
         addUser(new EntertainmentProvider(
                 "Music Corp", "BN12345678", "Smith", "We organise music events",

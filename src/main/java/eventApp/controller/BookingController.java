@@ -64,6 +64,8 @@ public class BookingController extends Controller {
 
         nextBookingNumber++;
 
+        booking.setStudent(student);
+
         //add booking to performance and students
         performance.addBooking(booking);
         student.addBooking(booking);

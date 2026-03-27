@@ -38,7 +38,7 @@ public class MockPaymentSystem implements PaymentSystem {
         }
         System.out.print(ANSI_CYAN);
         System.out.println("Student with email " + studentEmail + " and phone number " + studentPhone +
-                "who had purchased " + numTickets + " tickets for the event " + eventTitle + " ran by the provider with email " +
+                " who had purchased " + numTickets + " tickets for the event " + eventTitle + " ran by the provider with email " +
                 epEmail + " totalling £" + transactionAmount + " has been refunded.");
         if (organiserMsg != null) {
             System.out.println("Message from the provider who cancelled the event: " + organiserMsg);

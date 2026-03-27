@@ -9,6 +9,7 @@ public class Booking {
     private double amountPaid;
     private LocalDateTime bookingDateTime;
     private BookingStatus status;
+    private Student student; //Booking need reference to Student
 
     public Booking(long bookingNumber, int numTickets, double amountPaid, LocalDateTime bookingDateTime, BookingStatus status) {
         this.bookingNumber = bookingNumber;
@@ -17,6 +18,7 @@ public class Booking {
         this.bookingDateTime = bookingDateTime;
         this.status = status;
     }
+
     public long getBookingNumber() {
         return bookingNumber;
     }
@@ -33,18 +35,25 @@ public class Booking {
         return status;
     }
 
+    //setters
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
     public void cancelByStudent(){}
 
     public void cancelPaymentFailed(){}
 
-    public void cancelByProvider(){}
+    public void cancelByProvider(){
+        this.status = BookingStatus.CANCELLEDBYPROVIDER;
+    }
 
     public boolean checkBookedByStudent(String email){
         return false;
     }
 
     public String getStudentDetails(){
-        return null;
+        return student.getEmail() + "," + student.getPhoneNumber();
     }
 
     public String generateBookingRecord(){

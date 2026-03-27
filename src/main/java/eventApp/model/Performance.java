@@ -3,6 +3,8 @@ package eventApp.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import eventApp.enums.BookingStatus;
 import eventApp.enums.PerformanceStatus;
 
 public class Performance {
@@ -23,6 +25,8 @@ public class Performance {
     private Collection<Integer> reviewRatings;
     private PerformanceStatus status;
     private Event event;
+    //Performance has 1-* relationship with Booking
+    private Collection<Booking> bookings;
 
     public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, Collection<String> performerName, String venueAddress, int venueCapacity,
                        boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTicketsTotal, double ticketPrice) {
@@ -42,6 +46,7 @@ public class Performance {
         this.reviewComments = new ArrayList<>();
         this.reviewRatings = new ArrayList<>();
         this.status = PerformanceStatus.ACTIVE;
+        this.bookings = new ArrayList<>();
     }
 
     //getters
@@ -121,8 +126,14 @@ public class Performance {
         this.numTicketsSold = numTicketsSold;
     }
 
+    public Collection<Booking> getBookings() {
+        return bookings;
+    }
+
     //methods
-    public void cancel(){}
+    public void cancel(){
+        this.status = PerformanceStatus.CANCELLED;
+    }
 
     public boolean checkIfEventIsTicketed(){
         Event event = getEvent();
@@ -146,26 +157,73 @@ public class Performance {
     }
 
     public boolean checkHasNotHappenedYet(){
-        return false;
+        LocalDateTime pStartDateTime = getStartDateTime();
+
+        //if start time is before now means it already happened -> false
+        if(pStartDateTime.isBefore(LocalDateTime.now())){
+            return false;
+        }
+        return true; // has not happened
     }
 
     public boolean checkCreatedByEP(String email){
-        return false;
+        //get event -> get organiser email -> compare with the EP email
+        Event event = getEvent();
+        String epEmail = event.getOrganiserEmail();
+
+        if(!email.equals(epEmail)){
+            return false;
+        }
+        return true;
     }
 
     public boolean hasActiveBookings(){
+        //iterate the bookings
+        //check if at least one of them is ACTIVE
+        //return
+        for(Booking booking: bookings){
+            if(booking.getStatus() == BookingStatus.ACTIVE){
+                return true;
+            }
+        }
         return false;
     }
 
     public String getBookingDetailsForRefund(){
-        return null;
+        //get booking
+        //booking = getBooking
+        //for each booking that is not cancelled
+        // get student details ( using String Builder)
+        //return
+        StringBuilder details = new StringBuilder();
+
+        for(Booking booking: bookings){
+            //only include ACTIVE bookings that havent been cancelled
+            if(booking.getStatus() == BookingStatus.ACTIVE){
+                //get student details
+                String studentDetails = booking.getStudentDetails();
+                String [] parts = studentDetails.split(",");
+                String studentEmail = parts[0];
+                int studentPhone = Integer.parseInt(parts[1]);
+
+                //append all the booking details
+                details.append(studentEmail).append(",")
+                        .append(studentPhone).append(",")
+                        .append(booking.getAmountPaid()).append(",")
+                        .append(booking.getNumTickets()).append(";");
+            }
+        }
+        //convert StringBuilder to String
+        return details.toString();
     }
 
     public void sponsor(double amount){}
 
     public void review(int rating, String comment){}
 
-    public void addBooking(Booking b){}
+    public void addBooking(Booking b){
+        bookings.add(b);
+    }
 
     public String toString(){
         return "Performance ID: " + performanceID +
