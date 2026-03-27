@@ -10,6 +10,7 @@ public class Student extends User{
         super(email, password);
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.preferences = new StudentPreferences();
     }
 
     //Getters

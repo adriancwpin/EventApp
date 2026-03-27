@@ -75,12 +75,6 @@ public class BookingController extends Controller {
         String epEmail = performance.getOrganiserEmail();
         double transactionAmount = performance.getFinalTicketPrice() * numTicketsReq;
 
-        System.out.println("DEBUG - eventTitle: " + eventTitle);
-        System.out.println("DEBUG - studentEmail: " + studentEmail);
-        System.out.println("DEBUG - epEmail: " + epEmail);
-        System.out.println("DEBUG - numTickets: " + numTicketsReq);
-        System.out.println("DEBUG - transactionAmount: " + transactionAmount);
-
         //process payment
         boolean paymentSuccess = paymentSystem.processPayment(numTicketsReq, eventTitle, studentEmail, studentPhone, epEmail, transactionAmount);
 

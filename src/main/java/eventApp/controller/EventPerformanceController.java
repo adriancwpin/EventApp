@@ -34,6 +34,8 @@ public class EventPerformanceController extends Controller{
 
     //Methods
     public Event createEvent() {
+        String ANSI_RED = "\u001B[31m";
+        String ANSI_RESET = "\u001B[0m";
         //Check if the current user is EP
         if(!checkCurrentUserIsEntertainmentProvider()){
             view.displayError("Only Entertainment Providers can be create events.");
@@ -48,6 +50,8 @@ public class EventPerformanceController extends Controller{
         //show the event type menu
         List<EventType> options = new ArrayList<>(Arrays.asList(EventType.values()));
         int choices = selectFromMenu(options, "=== [Select Event Type]===");
+        // i can teach you somethig cool
+
 
         EventType selectedEvent = options.get(choices - 1);
 
