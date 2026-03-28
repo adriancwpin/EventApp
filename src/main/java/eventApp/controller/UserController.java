@@ -5,6 +5,7 @@ import eventApp.external.*;
 import eventApp.view.*;
 import java.util.*;
 
+
 /**
  * handles all user-related operations including login,logout
  * and registration of Entertainment Providers
@@ -199,14 +200,24 @@ public class UserController extends Controller {
     }
 
     private void addPreregisteredUsers() {
-        //test log in
         addUser(new Student("student@test.com", "password123", "John", 123456));
-        // test EP
         addUser(new EntertainmentProvider(
-                "Music Corp", "BN12345678", "Smith", "We organise music events",
-                "ep@test.com", "ep123"
-            ));
+                "ep@test.com",              // email
+                "ep123",                    // password
+                "Music Corp",               // orgName
+                "BN12345678",               // businessNumber
+                "Smith",                    // name
+                "We organise music events"  // description
+        ));
+
+        addUser(new AdminStaff(
+                "admin@test.com",  // email
+                "admin123",        // password
+                "Anasa"            // name
+        ));
     }
+
+
 
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
         return null;

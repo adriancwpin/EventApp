@@ -306,11 +306,69 @@ public class EventPerformanceController extends Controller{
         }
     }
 
-    private boolean checkIfSponsorshipPossible(Performance performance, int amount){
-        return false;
+    private boolean checkIfSponsorshipPossible(Performance performance, double amount){
+        boolean isTicketed = performance.checkIfEventIsTicketed();
+
+        //check if the event is already sponsored
+        if(performance.isSponsored()){
+            view.displayError("This performance is already sponsored.");
+            return false;
+        }
+
+        //check if the event is isTicketed
+        if(!isTicketed){
+            view.displayError("The requested performance's event is non ticketed. It cannot be sponsored.");
+            return false;
+        }
+
+        //get ticket price
+        double ticketPrice = performance.getTicketPrice();
+
+        if(amount < 0 || amount > ticketPrice){
+            view.displayError("The amount provided is invalid.");
+            return false;
+        }
+
+        return true;
     }
 
-    public void sponsorPerformance(){}
+    public void sponsorPerformance(){
+        //Only admin staff can sponsor performance
+        if(!checkCurrentUserIsAdmin()){
+            view.displayError("Only Admin can sponsor performance.");
+            return;
+        }
+
+        AdminStaff adminStaff = (AdminStaff) currentUser;
+        Performance performance = null;
+        boolean possible = false;
+        double sponsorshipAmount = 0;
+        while(performance == null || !possible){
+            try{
+                long performanceID = Long.parseLong(view.getInput("Enter Performance ID: "));
+                sponsorshipAmount = Double.parseDouble(view.getInput("Enter Sponsorship Amount: £"));
+
+                performance = getPerformanceByID(performanceID);
+
+                //performance not found
+                if(performance == null){
+                    view.displayError("Performance with given number does not exists.");
+                    continue;
+                }
+
+                //check if sponsorship is possible
+                possible  = checkIfSponsorshipPossible(performance, sponsorshipAmount);
+            } catch (NumberFormatException e){
+                view.displayError("Invalid input, please enter a number.");
+                performance = null;
+                possible = false;
+            }
+        }
+
+        //sponsor
+        performance.sponsor(sponsorshipAmount);
+        view.displaySuccess("Sponsorship Successful.");
+    }
 
     private void addEvent(Event e){
         events.add(e);
@@ -359,7 +417,7 @@ public class EventPerformanceController extends Controller{
             sb.append("\n=== Ticket Details ===\n");
             sb.append("Number of Ticket Available: ").append(performance.getNumTicketsTotal() -
                     performance.getNumTicketsSold()).append("\n");
-            sb.append("Ticket Price: ").append(performance.getTicketPrice()).append("\n");
+            sb.append("Ticket Price: ").append(performance.getFinalTicketPrice()).append("\n");
         }
 
         //average event rating
