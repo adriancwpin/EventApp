@@ -6,6 +6,7 @@ import eventApp.model.*;
 import eventApp.view.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -60,11 +61,14 @@ public class BookingController extends Controller {
 
         //create booking
         Booking booking = new Booking (nextBookingNumber, numTicketsReq, performance.getFinalTicketPrice() * numTicketsReq,
-                LocalDateTime.now(), BookingStatus.ACTIVE);
+                LocalDateTime.now());
 
         nextBookingNumber++;
 
         booking.setStudent(student);
+        booking.setPerformance(performance);
+
+        addBooking(booking);
 
         //add booking to performance and students
         performance.addBooking(booking);
@@ -97,11 +101,89 @@ public class BookingController extends Controller {
         view.displayBookingRecord(bookingRecord);
     }
 
-    public void reviewPerformance(){}
+    public void reviewPerformance(){
 
-    public void cancelBooking(){}
+    }
 
-    private void addBooking(Booking b){}
+    public void cancelBooking() {
+        //has to be student
+        if (!checkCurrentUserIsStudent()) {
+            view.displayError("Only student can cancel booking.");
+            return;
+        }
+        //ask for booking number
+        Student student = (Student) currentUser;
+        Booking booking = null;
+
+        while (booking == null) {
+            try {
+                long bookingNumber = Long.parseLong(view.getInput("Enter Booking Number: "));
+                booking = getBookingByNumber(bookingNumber);
+
+                if (booking == null) {
+                    view.displayError("This booking number does not exists.");
+                    continue;
+                }
+                //1a. booking does not belong to student
+                if (!booking.checkBookedByStudent(student.getEmail())) {
+                    view.displayError("This booking number does not belong to you. Please try again.");
+                    booking = null;
+                    continue;
+                }
+
+                // check if the booking still active
+                if (booking.getStatus() != BookingStatus.ACTIVE) {
+                    view.displayError("This booking has been cancelled. Sorry for the inconvenience.");
+                    booking = null;
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                view.displayError("Invalid booking number. Please enter a valid number.");
+                booking = null;
+            }
+        }
+
+        //get associated performance once we get the booking ID
+        Performance performance = booking.getPerformance();
+
+        //1b. check if the booking is less than 24 hrs away
+        LocalDateTime performanceTime = performance.getStartDateTime();
+        LocalDateTime now = LocalDateTime.now();
+
+        if (performanceTime.isBefore(now.plusHours(24))) {
+            view.displayError("Cancellation is not allowed. The performance is less than 24 hours away.");
+            return;
+        }
+
+        //refund
+        String eventTitle = performance.getEventTitle();
+        String studentEmail = student.getEmail();
+        int studentPhone = student.getPhoneNumber();
+        String epEmail = performance.getOrganiserEmail();
+        double transactionAmount = booking.getAmountPaid();
+        int numTicketsBought = booking.getNumTickets();
+
+        boolean refundSuccess = paymentSystem.processRefund(numTicketsBought, eventTitle, studentEmail, studentPhone,
+                epEmail, transactionAmount, "Booking cancelled by student.");
+
+        //2a. refund failed
+        if (!refundSuccess) {
+            view.displayError("Refund failed. Booking is not cancelled.");
+            return;
+        }
+
+        //cancel booking
+        booking.cancelByStudent();
+
+        //update ticket sold
+        performance.setNumTicketsSold(performance.getNumTicketsSold() - numTicketsBought);
+
+        view.displaySuccess("Booking cancelled successfully.");
+    }
+
+    private void addBooking(Booking b){
+        bookings.add(b);
+    }
 
     private Performance getPerformanceByID(long performanceID){
         //loop for each performance p
@@ -138,10 +220,23 @@ public class BookingController extends Controller {
     }
 
     private Collection<Booking> findBookingsByEventID(long eventID){
-        return null;
+        Collection<Booking> b = new ArrayList<>();
+        for(Booking booking : bookings){
+            if(booking.getPerformance().getEvent().getEventID() == eventID){
+                b.add(booking);
+            }
+        }
+        return b;
     }
 
     private Booking getBookingByNumber(long bookingNumber){
+        System.out.println("DEBUG - bookings size: " + bookings.size());
+        for (Booking booking: bookings){
+            System.out.println("DEBUG - checking booking: " + booking.getBookingNumber());
+            if(booking.getBookingNumber() == bookingNumber){
+                return booking; //found the booking
+            }
+        }
         return null;
     }
 }
