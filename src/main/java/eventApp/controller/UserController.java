@@ -23,7 +23,7 @@ public class UserController extends Controller {
         this.users = user;
         this.view = view;
         this.verificationService = verificationService;
-        addPreregisteredUsers();
+        addPreregisteredUsers();// where is ur current user stored
     }
 
     //Getters
@@ -113,7 +113,86 @@ public class UserController extends Controller {
         return false;
     }
 
-    public void editPreferences(){}
+    public void editPreferences(){
+        //make sure only student can edit preferences
+        if(!checkCurrentUserIsStudent()){
+            view.displayError("Only student can edit the preferences!");
+            return;
+        }
+
+        Student student = (Student) currentUser;
+
+        //update up to 3 preferences for valid event types
+        // reset preferences
+        StudentPreferences pref = student.getPreferences();
+
+        List<String> selectedPref = new ArrayList<>();
+
+        for (int i = 1; i <= 3; i++){
+            String input;
+            if (i == 1){
+                input = view.getInput("Enter preference " + i +
+                        " (MUSIC/THEATRE/DANCE/MOVIE/SPORTS): ");
+            } else{
+                input = view.getInput("Enter preference " + i +
+                        " (MUSIC/THEATRE/DANCE/MOVIE/SPORTS) or 'done' to finish: ");
+            }
+
+            if(input.equalsIgnoreCase("done")){
+                break;
+            }
+
+            //validate preference
+            input = input.trim().toUpperCase();
+            if (!isValidPreference(input)){
+                view.displayError("Invalid preference! Please try again and use: " +
+                        "MUSIC, THEATRE, DANCE, MOVIE, SPORTS");
+                i--; //ask again
+                continue;
+            }
+
+            //in case for duplicates
+            if(selectedPref.contains(input)){
+                view.displayError("You have already selected " + input + "!");
+                i--; // try again
+                continue;
+            }
+            selectedPref.add(input);
+        }
+
+        //update preferences
+        boolean success = student.getPreferences().updatePreference(String.join(",", selectedPref));
+
+        //if not valid then give error
+        if(!success){
+            view.displayError("Something wrong. Please update the preferences again.");
+            editPreferences(); //ask again
+            return;
+        }
+        //replace any previosuly saved preferences
+        //apply to to their searched performancecs
+
+        view.displaySuccess("Preferences updated successfully!");
+
+
+
+
+    }
+
+    //helper function for edit preference
+    private boolean isValidPreference(String preference){
+        switch (preference){
+            case "MUSIC":
+            case "THEATRE":
+            case "DANCE":
+            case "MOVIE":
+            case "SPORTS":
+                return true;
+
+            default:
+                return false;
+        }
+    }
 
     private void addUser(User user) {
         users.add(user);
@@ -121,7 +200,7 @@ public class UserController extends Controller {
 
     private void addPreregisteredUsers() {
         //test log in
-        addUser(new Student("John", 012345 , "student@test.com","password123"));
+        addUser(new Student("student@test.com", "password123", "John", 123456));
         // test EP
         addUser(new EntertainmentProvider(
                 "Music Corp", "BN12345678", "Smith", "We organise music events",

@@ -1,5 +1,6 @@
 package eventApp.controller;
 
+import eventApp.enums.BookingStatus;
 import eventApp.enums.EventType;
 import eventApp.external.PaymentSystem;
 import eventApp.model.*;
@@ -34,6 +35,8 @@ public class EventPerformanceController extends Controller{
 
     //Methods
     public Event createEvent() {
+        String ANSI_RED = "\u001B[31m";
+        String ANSI_RESET = "\u001B[0m";
         //Check if the current user is EP
         if(!checkCurrentUserIsEntertainmentProvider()){
             view.displayError("Only Entertainment Providers can be create events.");
@@ -47,7 +50,7 @@ public class EventPerformanceController extends Controller{
 
         //show the event type menu
         List<EventType> options = new ArrayList<>(Arrays.asList(EventType.values()));
-        int choices = selectFromMenu(options, "=== [Select Event Type]===");
+        int choices = selectFromMenu(options, "\n=== [Select Event Type]===\n");
 
         EventType selectedEvent = options.get(choices - 1);
 
@@ -91,6 +94,16 @@ public class EventPerformanceController extends Controller{
                 }
             }
 
+            //check if there is overlapping event title and time clashes
+            Event existingEvent = getEventByTitle(title);
+
+            if(existingEvent != null &&
+                    existingEvent.hasSameTitleAndTime(title, startDateTime, endDateTime)){
+                view.displayError("An event with this name has already exists at the same time!");
+                i--; //ask again
+                continue;
+            }
+
             //get venue
             String venueAddress = view.getInput("Enter Venue Address: ");
             int venueCapacity = Integer.parseInt(view.getInput("Enter Venue Capacity: "));
@@ -117,6 +130,13 @@ public class EventPerformanceController extends Controller{
             //create performance
             Performance performance = event.createPerformance(nextPerformanceID, startDateTime, endDateTime, performerNames,
                     venueAddress, venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice);
+
+            //check time clashes
+            if(performance == null){
+                view.displayError("A performance already exists at this time");
+                i--; //ask again
+                continue;
+            }
 
             nextPerformanceID++;
             addPerformance(performance);
@@ -189,7 +209,102 @@ public class EventPerformanceController extends Controller{
         view.displaySpecificPerformance(buildPerformanceInfo(performance, event));
     }
 
-    public void cancelPerformance(){}
+    public void cancelPerformance(){
+        //only EP is allowed to cancel performance
+        if(!checkCurrentUserIsEntertainmentProvider()){
+            view.displayError("Only Entertainment Provider can cancel performance.");
+            return;
+        }
+
+        EntertainmentProvider ep = (EntertainmentProvider) currentUser;
+
+        //performance is null and loop until valid performance is found
+        Performance performance = null;
+
+        while(performance == null || !performance.checkCreatedByEP(ep.getEmail()) || !performance.checkHasNotHappenedYet()){
+            try{
+                long performanceID = Long.parseLong(view.getInput("Enter ID of performance to cancel: "));
+                performance = getPerformanceByID(performanceID);
+
+                //performance not found
+                if(performance == null){
+                    view.displayError("Performance with given number does not exists.");
+                    return;
+                }
+
+                //check created by EP
+                if(!performance.checkCreatedByEP(ep.getEmail())){
+                    view.displayError("The performance with given number does not belong to you.");
+                    return;
+                }
+
+                //check if the event has happened
+                boolean hasNotHappenedYet = performance.checkHasNotHappenedYet();
+
+                if(!hasNotHappenedYet){
+                    view.displayError("Performance cannot be cancelled as it has already happened.");
+                    return;
+                }
+            }catch (NumberFormatException e){
+                view.displayError("Invalid ID, please enter a number.");
+                return;
+            }
+        }
+
+        //organiser message is null
+        String organiserMessage = null;
+        while(organiserMessage == null){
+            organiserMessage = view.getInput("Provide a cancellation message for affected students: ");
+
+            if(organiserMessage == null || organiserMessage.isEmpty()){
+                view.displayError("Provide a cancellation message for affected students.");
+                organiserMessage = null;
+            }
+        }
+
+        //check if there's any active bookings
+        if(performance.hasActiveBookings()){
+            //get event title and ep email
+            String eventTitle = performance.getEventTitle();
+            String epEmail = ep.getEmail();
+
+            //get booking details for refund
+            String bookingDetailsForRefund = performance.getBookingDetailsForRefund();
+
+            //Split ";" to get each of the booking details
+            String [] bookingDetails = bookingDetailsForRefund.split(";");
+
+            for (String bd : bookingDetails) {
+                String [] parts = bd.split(",");
+                String studentEmail = parts[0];
+                int studentPhone = Integer.parseInt(parts[1]);
+                double transcationAmount = Double.parseDouble(parts[2]);
+                int numTickets = Integer.parseInt(parts[3]);
+
+                boolean refundSuccess = paymentSystem.processRefund(numTickets, eventTitle, studentEmail, studentPhone,
+                        epEmail, transcationAmount, organiserMessage);
+
+                if(!refundSuccess){
+                    view.displayError("There was an issue with a refund. The performance cannot be cancelled.");
+                    return;
+                }
+
+                //success
+                //cancel by the ep and set status to CANCELLED
+                for(Booking booking : performance.getBookings()){
+                    if(booking.getStatus() == BookingStatus.ACTIVE){
+                        booking.cancelByProvider();
+                    }
+                }
+
+                //cancel the performance
+                performance.cancel();
+
+                view.displaySuccess("Cancellation Successful.");
+
+            }
+        }
+    }
 
     private boolean checkIfSponsorshipPossible(Performance performance, int amount){
         return false;

@@ -136,6 +136,17 @@ public class Event {
         return false;
     }
 
+    //helper function to check if there is any time clash within the same event -> 2 same event titles
+    public boolean hasSameTitleAndTime (String title, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        //check same title
+        if(!this.title.equalsIgnoreCase(title)) {
+            return false;
+        }
+
+        //check time clashes
+        return hasPerformanceAtSameTimes(startDateTime, endDateTime);
+    }
+
     private void addPerformance(Performance p){
         performances.add(p);
     }
