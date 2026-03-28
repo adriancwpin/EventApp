@@ -218,8 +218,21 @@ public class Performance {
     }
 
     public void sponsor(double amount){}
+    //check if any booking in performance belongs to student
+    public boolean checkBookedPerfByStudent(String email){
+        for(Booking booking: bookings){
+            //check if booking belongs to the student and its active
+            if(booking.checkBookedByStudent(email) && booking.getStatus() == BookingStatus.ACTIVE){
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public void review(int rating, String comment){}
+    public void review(int rating, String comment){
+        reviewRatings.add(rating);
+        reviewComments.add(comment);
+    }
 
     public void addBooking(Booking b){
         bookings.add(b);

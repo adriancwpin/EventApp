@@ -102,7 +102,74 @@ public class BookingController extends Controller {
     }
 
     public void reviewPerformance(){
+        //check if the current user is student
+        if(!checkCurrentUserIsStudent()){
+            view.displayError("Only student can review performances.");
+            return;
+        }
+        Student student = (Student) currentUser;
 
+        //find a valid performance id
+        //check if the student booked this performance
+        //ask for rating
+        //ask for optional comment
+        //success
+        Performance performance = null;
+        while(performance == null){
+            try{
+                long performanceID = Long.parseLong(view.getInput("Enter Performance ID to review: "));
+                performance = getPerformanceByID(performanceID);
+
+                //performance not found
+                if(performance == null){
+                    view.displayError("Couldn't find any peformance with this performance ID.");
+                    continue;
+                }
+
+                //check if the performance has happened
+                if(performance.checkHasNotHappenedYet()){
+                    view.displayError("You can only review the performance that has already taken place.");
+                    performance = null;
+                    continue;
+                }
+
+                //chcek if the student booked that performance
+                if(!performance.checkBookedPerfByStudent(student.getEmail())){
+                    view.displayError("Only student that booked the performance is eligible to review.");
+                    performance = null;
+                    continue;
+                }
+
+            }catch(NumberFormatException e){
+                view.displayError("Invalid input. Please enter a number.");
+                performance = null;
+            }
+        }
+
+        //ask for rating
+        int rating = 0;
+
+        while(rating == 0){
+            try{
+                rating = Integer.parseInt(view.getInput("Enter rating (1-10): "));
+                if(rating < 1 || rating > 10){
+                    view.displayError(" Rating must be betweem 1 and 5");
+                    rating = 0;
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                view.displayError("Invalid input. Please enter a number.");
+                rating = 0;
+            }
+        }
+
+        //ask for comment (optional)
+        String comment = view.getInput("Comment on the performance (press enter to skip):  ");
+
+        //add review to performance
+        performance.review(rating, comment);
+
+        view.displaySuccess("Review submitted successfully!");
     }
 
     public void cancelBooking() {
