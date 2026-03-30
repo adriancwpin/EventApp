@@ -55,11 +55,18 @@ public class EventPerformanceController extends Controller{
         EventType selectedEvent = options.get(choices - 1);
 
         //check if isTicketed
-        String ticketed = view.getInput("Is this event ticketed? (Y/N): ");
+        String ticketed = null;
+        while(ticketed == null){
+            ticketed = view.getInput("Is this event ticketed? (Y/N): ");
+            if(!ticketed.equalsIgnoreCase("Y") && !ticketed.equalsIgnoreCase("N")){
+                view.displayError("Invalid input. Please enter Y or N.");
+                ticketed = null; //ask again
+            }
+        }
         boolean isTicketed = ticketed.equalsIgnoreCase("Y");
 
         //create new Event with nextEVentID
-        Event event = new Event(nextEventID, title, selectedEvent, isTicketed, ep.getEmail());
+        Event event = new Event(nextEventID, title, selectedEvent, isTicketed, ep.getEmail(), ep.getName());
         nextEventID++;
 
        //ask how many performances
@@ -67,7 +74,7 @@ public class EventPerformanceController extends Controller{
 
         //list the performances
         for (int i = 0; i < numPerformances; i++) {
-            System.out.println("=== Performance " + (i + 1) + " ===");
+            System.out.println("\n === Performance " + (i + 1) + " === \n");
 
             //get date , time and venue
             LocalDateTime startDateTime = null;
@@ -106,9 +113,21 @@ public class EventPerformanceController extends Controller{
 
             //get venue
             String venueAddress = view.getInput("Enter Venue Address: ");
-            int venueCapacity = Integer.parseInt(view.getInput("Enter Venue Capacity: "));
-            boolean venueIsOutdoors = view.getInput("Is the venue outdoor? (Y/N) ").equalsIgnoreCase("Y");
-            boolean venueAllowsSmoking = view.getInput("Is smoking allowed? (Y/N) ").equalsIgnoreCase("Y");
+            int venueCapacity = 0;
+            while(venueCapacity <= 0){
+                try{
+                    venueCapacity = Integer.parseInt(view.getInput("Enter Venue Capacity: "));
+                    if(venueCapacity <= 0){
+                        view.displayError("Capacity must be greater than 0.");
+                        continue; //ask again
+                    }
+                } catch (NumberFormatException e){
+                    view.displayError("Please enter a valid number.");
+                }
+            }
+
+            boolean venueIsOutdoors = getYesNo("Is the venue outdoor? (Y/N): ");
+            boolean venueAllowsSmoking = getYesNo("Is smoking allowed? (Y/N) ");
 
             //get performer names
             int numPerformers = Integer.parseInt(view.getInput("Number of performers: "));
@@ -146,7 +165,10 @@ public class EventPerformanceController extends Controller{
         addEvent(event);
         ep.addEvent(event);
 
-        view.displaySuccess("Event '" + title + "' created successfully!");
+        view.displaySuccess("\nEvent '" + title + "' created successfully! \n");
+
+        //press enter to return to dashboard
+        view.getInput("Press enter to return to dashboard...\n");
         return event;
     }
 

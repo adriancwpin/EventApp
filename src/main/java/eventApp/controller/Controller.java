@@ -38,6 +38,21 @@ public abstract class Controller{
         this.currentUser = user;
     }
 
+    //helper function for getting correct input for Yes or No
+    protected boolean getYesNo(String prompt){
+        String input = null;
+        while(input == null){
+            input = view.getInput(prompt);
+
+            if(!input.equalsIgnoreCase("Y") &&
+                !input.equalsIgnoreCase("N")){
+                view.displayError("Invalid input. Please enter Y or N.");
+                input = null; // ask again
+            }
+        }
+
+        return input.equalsIgnoreCase("Y");
+    }
     /**
      * Display a menu of options to the user and capture their selection.
      *
@@ -48,7 +63,9 @@ public abstract class Controller{
      */
 
     protected <T> int selectFromMenu(Collection<T> options,  String prompt){
+        System.out.println(); //empty line before
         System.out.println(prompt);
+        System.out.println(); //empty line after
         int count = 1;
         for (T option : options){
             System.out.println(count + "." + option);

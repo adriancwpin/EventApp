@@ -13,8 +13,8 @@ import java.util.*;
 
 public class UserController extends Controller {
     //file path constant
-    public static final String PREREGISTERED_USERS_FILE_PATH = "resources/preregistered_users.txt";
-    public static final String PREREGISTERED_ADMIN_FILE_PATH = "resources/preregistered_admin.txt";
+    public static final String PREREGISTERED_USERS_FILE_PATH = "";
+    public static final String PREREGISTERED_ADMIN_FILE_PATH = "";
 
     //shared resources based on the dependancy on class diagram
     private Collection<User> users;
@@ -175,9 +175,6 @@ public class UserController extends Controller {
 
         view.displaySuccess("Preferences updated successfully!");
 
-
-
-
     }
 
     //helper function for edit preference
@@ -220,7 +217,17 @@ public class UserController extends Controller {
 
 
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
-        return null;
+        for(User user: users){
+            if(user instanceof EntertainmentProvider ep) {
+                //check if this EP owns the event
+                for(Event event: ep.getEvents()){
+                    if(event.getEventID() == eventNumber){
+                        return ep; //found the ep
+                    }
+                }
+            }
+        }
+        return null; //not found
     }
 
 }
