@@ -5,25 +5,30 @@ import java.util.Scanner;
 import java.util.Collection;
 
 public class TextUserInterface implements View{
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_RESET = "\u001B[0m";
     private final Scanner scanner = new Scanner(System.in);
+
 
     @Override
     public String getInput(String inputPrompt){
-        System.out.print(inputPrompt);
+        System.out.print(ANSI_YELLOW + inputPrompt + ANSI_RESET);
         return scanner.nextLine();
     }
 
     @Override
     public void displaySuccess(String successMessage) {
         System.out.println(); //empty line before
-        System.out.println("[SUCCESS]" + successMessage);
+        System.out.println(ANSI_GREEN + "[SUCCESS]" + successMessage + ANSI_RESET);
         System.out.println(); //after
     }
 
     @Override
     public void displayError(String errorMessage) {
         System.out.println(); //empty line before
-        System.out.println("[ERROR]" + errorMessage);
+        System.out.println(ANSI_RED + "[ERROR]" + errorMessage +ANSI_RESET);
         System.out.println(); //empty line after
     }
 

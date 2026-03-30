@@ -36,8 +36,6 @@ public class EventPerformanceController extends Controller{
 
     //Methods
     public Event createEvent() {
-        String ANSI_RED = "\u001B[31m";
-        String ANSI_RESET = "\u001B[0m";
         //Check if the current user is EP
         if(!checkCurrentUserIsEntertainmentProvider()){
             view.displayError("Only Entertainment Providers can be create events.");
@@ -68,7 +66,7 @@ public class EventPerformanceController extends Controller{
         String ticketed = null;
         while(ticketed == null){
             ticketed = view.getInput("\nIs this event ticketed? (Yes/No): ");
-            if(!ticketed.equalsIgnoreCase("Yes") && !ticketed.equalsIgnoreCase("N0")){
+            if(!ticketed.equalsIgnoreCase("Yes") && !ticketed.equalsIgnoreCase("No")){
                 view.displayError("Invalid input. Please enter Yes or No.");
                 ticketed = null; //ask again
             }
