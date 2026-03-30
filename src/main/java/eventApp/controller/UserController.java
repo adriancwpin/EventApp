@@ -5,6 +5,7 @@ import eventApp.external.*;
 import eventApp.view.*;
 import java.util.*;;
 
+
 /**
  * handles all user-related operations including login,logout
  * and registration of Entertainment Providers
@@ -12,8 +13,8 @@ import java.util.*;;
 
 public class UserController extends Controller {
     //file path constant
-    public static final String PREREGISTERED_USERS_FILE_PATH = "resources/preregistered_users.txt";
-    public static final String PREREGISTERED_ADMIN_FILE_PATH = "resources/preregistered_admin.txt";
+    public static final String PREREGISTERED_USERS_FILE_PATH = "";
+    public static final String PREREGISTERED_ADMIN_FILE_PATH = "";
 
     //shared resources based on the dependancy on class diagram
     private Collection<User> users;
@@ -59,7 +60,7 @@ public class UserController extends Controller {
      * display success message
      */
     public void logout() {
-        if(currentUser != null) {
+        if(currentUser == null) {
             view.displayError("No user logged in.");
         }
 
@@ -75,7 +76,15 @@ public class UserController extends Controller {
         String businessNumber = view.getInput("Enter business number: ");
         String name = view.getInput("Enter name: ");
         String description = view.getInput("Enter description: ");
-        String email = view.getInput("Enter email: ");
+        String email = null;
+        while (email == null){
+            email = view.getInput("Enter email: ").trim();
+            if(!isValidEmail(email)){
+                view.displayError("Invalid email format! Please use format: example@domain.com");
+                email = null;
+            }
+
+        }
         String password = view.getInput("Enter password: ");
 
         //check if account already exits
@@ -173,9 +182,7 @@ public class UserController extends Controller {
         //apply to to their searched performancecs
 
         view.displaySuccess("Preferences updated successfully!");
-
-
-
+        view.getInput("Press ENTER to return to dashboard... \n");
 
     }
 
@@ -199,17 +206,37 @@ public class UserController extends Controller {
     }
 
     private void addPreregisteredUsers() {
-        //test log in
         addUser(new Student("student@test.com", "password123", "John", 123456));
-        // test EP
         addUser(new EntertainmentProvider(
-                "Music Corp", "BN12345678", "Smith", "We organise music events",
-                "ep@test.com", "ep123"
-            ));
+                "ep@test.com",              // email
+                "ep123",                    // password
+                "Music Corp",               // orgName
+                "BN12345678",               // businessNumber
+                "Smith",                    // name
+                "We organise music events"  // description
+        ));
+
+        addUser(new AdminStaff(
+                "admin@test.com",  // email
+                "admin123",        // password
+                "Anasa"            // name
+        ));
     }
 
+
+
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
-        return null;
+        for(User user: users){
+            if(user instanceof EntertainmentProvider ep) {
+                //check if this EP owns the event
+                for(Event event: ep.getEvents()){
+                    if(event.getEventID() == eventNumber){
+                        return ep; //found the ep
+                    }
+                }
+            }
+        }
+        return null; //not found
     }
 
 }
