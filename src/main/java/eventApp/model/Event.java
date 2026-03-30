@@ -14,14 +14,16 @@ public class Event {
     private boolean isTicketed;
     private List<Performance> performances;
     private String organiserEmail;
+    private String organiserName;
 
-    public Event(long eventID, String title, EventType type, boolean isTicketed,String organiserEmail) {
+    public Event(long eventID, String title, EventType type, boolean isTicketed,String organiserEmail, String organiserName) {
         this.eventID = eventID;
         this.title = title;
         this.type = type;
         this.isTicketed = isTicketed;
         this.performances = new ArrayList<Performance>();
         this.organiserEmail = organiserEmail;
+        this.organiserName = organiserName;
     }
 
     public long getEventID() { return eventID; }
@@ -85,7 +87,7 @@ public class Event {
     }
 
     private String getOrganiserName(){
-        return null;
+        return organiserName;
     };
 
     public String getOrganiserEmail(){

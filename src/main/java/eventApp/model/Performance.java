@@ -145,6 +145,10 @@ public class Performance {
     }
 
     public double getFinalTicketPrice() {
+        if(isSponsored){
+            return ticketPrice - sponsoredAmount;
+        }
+
         return ticketPrice;
     }
 
@@ -217,7 +221,11 @@ public class Performance {
         return details.toString();
     }
 
-    public void sponsor(double amount){}
+    public void sponsor(double amount){
+        this.isSponsored = true;
+        this.sponsoredAmount = amount;
+    }
+
     //check if any booking in performance belongs to student
     public boolean checkBookedPerfByStudent(String email){
         for(Booking booking: bookings){
@@ -245,7 +253,8 @@ public class Performance {
                 " | Venue: " + venueAddress +
                 " | Capacity: " + venueCapacity +
                 " | Number Ticket Available: " + (numTicketsTotal - numTicketsSold) +
-                " | Ticket Price: " + ticketPrice +
+                " | Sponsored Amount: £" + sponsoredAmount +
+                " | Ticket Price: " + getFinalTicketPrice() +
                 " | Status: " + status;
     }
 

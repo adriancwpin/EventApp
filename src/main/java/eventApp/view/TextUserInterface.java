@@ -15,12 +15,16 @@ public class TextUserInterface implements View{
 
     @Override
     public void displaySuccess(String successMessage) {
+        System.out.println(); //empty line before
         System.out.println("[SUCCESS]" + successMessage);
+        System.out.println(); //after
     }
 
     @Override
     public void displayError(String errorMessage) {
+        System.out.println(); //empty line before
         System.out.println("[ERROR]" + errorMessage);
+        System.out.println(); //empty line after
     }
 
     @Override

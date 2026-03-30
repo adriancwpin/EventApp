@@ -5,6 +5,7 @@ import eventApp.external.*;
 import eventApp.view.*;
 import java.util.*;
 
+
 /**
  * handles all user-related operations including login,logout
  * and registration of Entertainment Providers
@@ -12,8 +13,8 @@ import java.util.*;
 
 public class UserController extends Controller {
     //file path constant
-    public static final String PREREGISTERED_USERS_FILE_PATH = "resources/preregistered_users.txt";
-    public static final String PREREGISTERED_ADMIN_FILE_PATH = "resources/preregistered_admin.txt";
+    public static final String PREREGISTERED_USERS_FILE_PATH = "";
+    public static final String PREREGISTERED_ADMIN_FILE_PATH = "";
 
     //shared resources based on the dependancy on class diagram
     private Collection<User> users;
@@ -174,9 +175,6 @@ public class UserController extends Controller {
 
         view.displaySuccess("Preferences updated successfully!");
 
-
-
-
     }
 
     //helper function for edit preference
@@ -199,17 +197,37 @@ public class UserController extends Controller {
     }
 
     private void addPreregisteredUsers() {
-        //test log in
         addUser(new Student("student@test.com", "password123", "John", 123456));
-        // test EP
         addUser(new EntertainmentProvider(
-                "Music Corp", "BN12345678", "Smith", "We organise music events",
-                "ep@test.com", "ep123"
-            ));
+                "ep@test.com",              // email
+                "ep123",                    // password
+                "Music Corp",               // orgName
+                "BN12345678",               // businessNumber
+                "Smith",                    // name
+                "We organise music events"  // description
+        ));
+
+        addUser(new AdminStaff(
+                "admin@test.com",  // email
+                "admin123",        // password
+                "Anasa"            // name
+        ));
     }
 
+
+
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
-        return null;
+        for(User user: users){
+            if(user instanceof EntertainmentProvider ep) {
+                //check if this EP owns the event
+                for(Event event: ep.getEvents()){
+                    if(event.getEventID() == eventNumber){
+                        return ep; //found the ep
+                    }
+                }
+            }
+        }
+        return null; //not found
     }
 
 }
