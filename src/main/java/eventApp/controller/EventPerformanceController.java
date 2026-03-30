@@ -6,6 +6,7 @@ import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import eventApp.view.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -72,7 +73,7 @@ public class EventPerformanceController extends Controller{
                 ticketed = null; //ask again
             }
         }
-        boolean isTicketed = ticketed.equalsIgnoreCase("Y");
+        boolean isTicketed = ticketed.equalsIgnoreCase("Yes");
 
         //create new Event with nextEVentID
         Event event = new Event(nextEventID, title, selectedEvent, isTicketed, ep.getEmail(), ep.getName());
@@ -98,21 +99,24 @@ public class EventPerformanceController extends Controller{
             System.out.println("\n === Performance " + (i + 1) + " === \n");
 
             //get date , time and venue
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             LocalDateTime startDateTime = null;
             while(startDateTime == null){
                 try{
-                    String startStr = view.getInput("Enter Start Date/Time (yyyy-MM-ddTHH:mm):  ");
-                    startDateTime = LocalDateTime.parse(startStr);
+                    String start_date = view.getInput("Enter Start Date (dd/MM/yyyy): ");
+                    String start_time = view.getInput("Enter Start Time (HH:mm): ");
+                    startDateTime = LocalDateTime.parse(start_date + " " + start_time, formatter);
                 } catch (DateTimeParseException e){
-                    view.displayError("Invalid date/time format. Please use yyyy-MM-ddTHH:mm format.");
+                    view.displayError("Invalid date/time format. Please use dd/MM/yyyy HH:mm format.");
                 }
             }
 
             LocalDateTime endDateTime = null;
             while(endDateTime == null){
                 try{
-                    String endStr = view.getInput("\nEnter End Date/Time (yyyy-MM-ddTHH:mm):  ");
-                    endDateTime = LocalDateTime.parse(endStr);
+                    String end_date = view.getInput("Enter End Date (dd/MM/yyyy): ");
+                    String end_time = view.getInput("Enter End Time (HH:mm): ");
+                    endDateTime = LocalDateTime.parse(end_date + " " + end_time, formatter);
                     if(endDateTime.isBefore(startDateTime)){
                         view.displayError("End time must be after start time!");
                         endDateTime = null;
@@ -191,6 +195,9 @@ public class EventPerformanceController extends Controller{
                         if(numTickets <= 0){
                             view.displayError("Number of ticket must be at least 1.");
                             continue;
+                        } else if (numTickets > venueCapacity) {
+                            view.displayError("Number of ticket must be less than venueCapacity.");
+                            continue;
                         }
 
                         if(ticketPrice <= 0){
@@ -231,13 +238,14 @@ public class EventPerformanceController extends Controller{
 
     public void searchForPerformances(){
         //ask for a date to search
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         LocalDateTime searchDate = null;
         while(searchDate == null){
             try{
-                String date = view.getInput("\nEnter Search Date of Performance (yyyy-MM-ddTHH:mm): ");
-                searchDate = LocalDateTime.parse(date);
+                String date = view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ");
+                searchDate = LocalDateTime.parse(date + " 00:00", formatter);
             } catch (DateTimeParseException e){
-                view.displayError("Invalid date/time format. Please use yyyy-MM-ddTHH:mm format.");
+                view.displayError("Invalid date/time format. Please use dd/MM/yyyy format.");
             }
         }
         //search all events for performances on that date
@@ -251,6 +259,7 @@ public class EventPerformanceController extends Controller{
         //case where no performance is found
         if(searched.isEmpty()){
             view.displayError("No performances found on this date!");
+            view.getInput("Press ENTER to return to dashboard...\n");
             return;
         }
         //if student then sort their preferences first
@@ -362,22 +371,23 @@ public class EventPerformanceController extends Controller{
             //get booking details for refund
             String bookingDetailsForRefund = performance.getBookingDetailsForRefund();
 
-            //Split ";" to get each of the booking details
-            String [] bookingDetails = bookingDetailsForRefund.split(";");
+            if(!bookingDetailsForRefund.isEmpty()) {
+                //Split ";" to get each of the booking details
+                String[] bookingDetails = bookingDetailsForRefund.split(";");
+                for (String bd : bookingDetails) {
+                    String[] parts = bd.split(",");
+                    String studentEmail = parts[0];
+                    int studentPhone = Integer.parseInt(parts[1]);
+                    double transcationAmount = Double.parseDouble(parts[2]);
+                    int numTickets = Integer.parseInt(parts[3]);
 
-            for (String bd : bookingDetails) {
-                String [] parts = bd.split(",");
-                String studentEmail = parts[0];
-                int studentPhone = Integer.parseInt(parts[1]);
-                double transcationAmount = Double.parseDouble(parts[2]);
-                int numTickets = Integer.parseInt(parts[3]);
+                    boolean refundSuccess = paymentSystem.processRefund(numTickets, eventTitle, studentEmail, studentPhone,
+                            epEmail, transcationAmount, organiserMessage);
 
-                boolean refundSuccess = paymentSystem.processRefund(numTickets, eventTitle, studentEmail, studentPhone,
-                        epEmail, transcationAmount, organiserMessage);
-
-                if(!refundSuccess){
-                    view.displayError("There was an issue with a refund. The performance cannot be cancelled.");
-                    return;
+                    if (!refundSuccess) {
+                        view.displayError("There was an issue with a refund. The performance cannot be cancelled.");
+                        return;
+                    }
                 }
             }
         }
@@ -491,19 +501,19 @@ public class EventPerformanceController extends Controller{
 
     //for view performance
     private String buildPerformanceInfo(Performance performance, Event event){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         StringBuilder sb = new StringBuilder();
 
         //event details
         sb.append("\n===EVENT DETAILS===\n");
         sb.append("Event Title: ").append(event.getTitle()).append("\n");
         sb.append("Event Type: ").append(event.getType()).append("\n");
-        sb.append("Organiser Email: ").append(event.getOrganiserEmail()).append("\n");
 
         //performance details
         sb.append("\n=== Performance Details ===\n");
         sb.append("Performance ID: ").append(performance.getPerformanceID()).append("\n");
-        sb.append("Start Time: ").append(performance.getStartDateTime()).append("\n");
-        sb.append("End Time: ").append(performance.getEndDateTime()).append("\n");
+        sb.append("Start Time: ").append(performance.getStartDateTime().format(formatter)).append("\n");
+        sb.append("End Time: ").append(performance.getEndDateTime().format(formatter)).append("\n");
         sb.append("Venue: ").append(performance.getVenueAddress()).append("\n");
         sb.append("Venue Capacity: ").append(performance.getVenueCapacity()).append("\n");
         sb.append("Outdoors: ").append(performance.isVenueIsOutdoors()).append("\n");
@@ -516,7 +526,7 @@ public class EventPerformanceController extends Controller{
             sb.append("\n=== Ticket Details ===\n");
             sb.append("Number of Ticket Available: ").append(performance.getNumTicketsTotal() -
                     performance.getNumTicketsSold()).append("\n");
-            sb.append("Ticket Price: ").append(performance.getFinalTicketPrice()).append("\n");
+            sb.append("Ticket Price:£ ").append(performance.getFinalTicketPrice()).append("\n");
         }
 
         //average event rating

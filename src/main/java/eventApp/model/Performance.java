@@ -1,6 +1,7 @@
 package eventApp.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -137,6 +138,9 @@ public class Performance {
 
     public boolean checkIfEventIsTicketed(){
         Event event = getEvent();
+        if(event == null){
+            return false; //null check
+        }
         return event.isTicketed();
     }
 
@@ -153,10 +157,16 @@ public class Performance {
     }
 
     public String getOrganiserEmail(){
+        if(event == null){
+            return null;
+        }
         return event.getOrganiserEmail();
     }
 
     public String getEventTitle(){
+        if(event == null){
+            return "Unknown Event"; //null check
+        }
         return event.getTitle();
     }
 
@@ -205,10 +215,9 @@ public class Performance {
             //only include ACTIVE bookings that havent been cancelled
             if(booking.getStatus() == BookingStatus.ACTIVE){
                 //get student details
-                String studentDetails = booking.getStudentDetails();
-                String [] parts = studentDetails.split(",");
-                String studentEmail = parts[0];
-                int studentPhone = Integer.parseInt(parts[1]);
+                String[] studentDetails = booking.getStudentDetails();
+                String studentEmail = studentDetails[0];
+                int studentPhone = Integer.parseInt(studentDetails[1]);
 
                 //append all the booking details
                 details.append(studentEmail).append(",")
@@ -247,14 +256,16 @@ public class Performance {
     }
 
     public String toString(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return "Performance ID: " + performanceID +
-                " | Start: " + startDateTime +
-                " | End: " + endDateTime +
+                " | Start: " + startDateTime.format(formatter) +
+                " | End: " + endDateTime.format(formatter) +
                 " | Venue: " + venueAddress +
+                " | Performers: " + performerName+
                 " | Capacity: " + venueCapacity +
                 " | Number Ticket Available: " + (numTicketsTotal - numTicketsSold) +
                 " | Sponsored Amount: £" + sponsoredAmount +
-                " | Ticket Price: " + getFinalTicketPrice() +
+                " | Ticket Price: £" + getFinalTicketPrice() +
                 " | Status: " + status;
     }
 

@@ -1,6 +1,8 @@
 package eventApp.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import eventApp.enums.BookingStatus;
 
 public class Booking {
@@ -67,16 +69,30 @@ public class Booking {
         return student.getEmail().equals(email);
     }
 
-    public String getStudentDetails(){
-        return student.getEmail() + "," + student.getPhoneNumber();
+    public String[] getStudentDetails(){
+        if(student == null){
+            return new String[]{"", "0"};
+        }
+        return new String[]{student.getEmail().trim(), String.valueOf(student.getPhoneNumber()).trim()};
     }
 
-    public String generateBookingRecord(){
-        return "Booking Number: " + bookingNumber + "\n" +
-                "Booking Date: " + bookingDateTime + "\n" +
-                "Number of Tickets: " + numTickets + "\n" +
-                "Amount Paid: £" + amountPaid + "\n" +
-                "Booking DateTime: " + bookingDateTime + "\n" +
-                "Status: " + status;
+    public String generateBookingRecord() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("==============================\n");
+        sb.append("       BOOKING RECORD         \n");
+        sb.append("==============================\n");
+        sb.append("Booking Number: ").append(bookingNumber).append("\n");
+        sb.append("Performance:    ").append(performance.getEventTitle()).append("\n");
+        sb.append("Date & Time:    ").append(performance.getStartDateTime().format(formatter)).append("\n");
+        sb.append("Venue:          ").append(performance.getVenueAddress()).append("\n");
+        sb.append("Tickets:        ").append(numTickets).append("\n");
+        sb.append("Amount Paid:    £").append(String.format("%.2f", amountPaid)).append("\n");
+        sb.append("Booked On:      ").append(bookingDateTime.format(formatter)).append("\n");
+        sb.append("Status:         ").append(status).append("\n");
+        sb.append("==============================");
+
+        return sb.toString();
     }
 }
