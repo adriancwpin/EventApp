@@ -89,7 +89,7 @@ public class EventPerformanceController extends Controller{
                     continue;
                 }
             } catch (NumberFormatException e){
-                view.displayError("Invalid input. Please enter a number.");
+                view.displayError("Invalid input. Please enter a valid number.");
             }
         }
 
@@ -169,7 +169,7 @@ public class EventPerformanceController extends Controller{
                         continue;
                     }
                 } catch (NumberFormatException e){
-                    view.displayError("Invalid input. Please enter a number.");
+                    view.displayError("Invalid input. Please enter a valid number.");
                 }
             }
             Collection<String> performerNames = new ArrayList<>();

@@ -47,8 +47,15 @@ public abstract class Controller{
             }
         }
 
-        return input.equalsIgnoreCase("Y");
+        return input.equalsIgnoreCase("Yes");
     }
+
+    //private helper method for email validation using regex
+    protected boolean isValidEmail(String email){
+        String emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        return email.matches(emailRegex);
+    }
+
     /**
      * Display a menu of options to the user and capture their selection.
      *
@@ -59,26 +66,25 @@ public abstract class Controller{
      */
 
     protected <T> int selectFromMenu(Collection<T> options,  String prompt){
-        System.out.println(); //empty line before
-        System.out.println(prompt);
-        System.out.println(); //empty line after
-        int count = 1;
-        for (T option : options){
-            System.out.println(count + "." + option);
-            count++;
-        }
-
-        //choose the options
         int choice = 0;
-        while(choice < 1 || choice > options.size()){
-            try{
+        while(choice < 1 || choice > options.size()) {
+            System.out.println(); //empty line before
+            System.out.println(prompt);
+            System.out.println(); //empty line after
+            int count = 1;
+            for (T option : options) {
+                System.out.println(count + "." + option);
+                count++;
+            }
+
+            try {
                 choice = Integer.parseInt(view.getInput("Enter Choice: ").trim());
 
-                if (choice < 1 || choice > options.size()){
+                if (choice < 1 || choice > options.size()) {
                     view.displayError("Invalid Choice. please choose a valid number.");
                     continue;
                 }
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 view.displayError("Invalid Choice. please enter a valid number.");
             }
         }

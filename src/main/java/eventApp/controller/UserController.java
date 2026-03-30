@@ -76,7 +76,15 @@ public class UserController extends Controller {
         String businessNumber = view.getInput("Enter business number: ");
         String name = view.getInput("Enter name: ");
         String description = view.getInput("Enter description: ");
-        String email = view.getInput("Enter email: ");
+        String email = null;
+        while (email == null){
+            email = view.getInput("Enter email: ").trim();
+            if(!isValidEmail(email)){
+                view.displayError("Invalid email format! Please use format: example@domain.com");
+                email = null;
+            }
+
+        }
         String password = view.getInput("Enter password: ");
 
         //check if account already exits

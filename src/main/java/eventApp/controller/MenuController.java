@@ -92,96 +92,98 @@ public class MenuController extends Controller {
         return true;
     }
 
-    private boolean handleStudentMainMenu(){
-        List<StudentMenuOptions> options = new ArrayList<>(Arrays.asList(StudentMenuOptions.values()));
+    private boolean handleStudentMainMenu() {
+        while(true) {
+            List<StudentMenuOptions> options = new ArrayList<>(Arrays.asList(StudentMenuOptions.values()));
 
-        int choice = selectFromMenu(options, "=== Student Main Menu ===");
-        StudentMenuOptions selected = options.get(choice - 1);
+            int choice = selectFromMenu(options, "=== Student Main Menu ===");
+            StudentMenuOptions selected = options.get(choice - 1);
 
-        switch (selected) {
-            case LOGOUT:
-                userController.logout();
-                break;
+            switch (selected) {
+                case LOGOUT:
+                    userController.logout();
+                    break;
 
-            case SEARCH_FOR_PERFORMANCES:
-                eventPerformanceController.searchForPerformances();
-                break;
+                case SEARCH_FOR_PERFORMANCES:
+                    eventPerformanceController.searchForPerformances();
+                    break;
 
-            case VIEW_PERFORMANCE:
-                eventPerformanceController.viewPerformance();
-                break;
+                case VIEW_PERFORMANCE:
+                    eventPerformanceController.viewPerformance();
+                    break;
 
-            case REVIEW_PERFORMANCE:
-                bookingController.reviewPerformance();
-                break;
+                case REVIEW_PERFORMANCE:
+                    bookingController.reviewPerformance();
+                    break;
 
-            case EDIT_PREFERENCES:
-                userController.editPreferences();
-                break;
+                case EDIT_PREFERENCES:
+                    userController.editPreferences();
+                    break;
 
-            case BOOK_EVENT:
-                bookingController.bookPerformance();
-                break;
+                case BOOK_EVENT:
+                    bookingController.bookPerformance();
+                    break;
 
-            case CANCEL_BOOKING:
-                bookingController.cancelBooking();
+                case CANCEL_BOOKING:
+                    bookingController.cancelBooking();
+            }
         }
-        return true;
     }
 
     private boolean handleEntertainmentProviderMainMenu(){
-        List<EPMenuOptions> options = new ArrayList<>(Arrays.asList(EPMenuOptions.values()));
+        while(true) {
+            List<EPMenuOptions> options = new ArrayList<>(Arrays.asList(EPMenuOptions.values()));
 
-        int choice = selectFromMenu(options, "=== Entertainment Provider Main Menu ===");
-        EPMenuOptions selected = options.get(choice - 1);
+            int choice = selectFromMenu(options, "=== Entertainment Provider Main Menu ===");
+            EPMenuOptions selected = options.get(choice - 1);
 
-        switch (selected) {
-            case LOGOUT:
-                userController.logout();
-                break;
+            switch (selected) {
+                case LOGOUT:
+                    userController.logout();
+                    return true;
 
-            case SEARCH_FOR_PERFORMANCES:
-                eventPerformanceController.searchForPerformances();
-                break;
+                case SEARCH_FOR_PERFORMANCES:
+                    eventPerformanceController.searchForPerformances();
+                    break;
 
-            case VIEW_PERFORMANCE:
-                eventPerformanceController.viewPerformance();
-                break;
+                case VIEW_PERFORMANCE:
+                    eventPerformanceController.viewPerformance();
+                    break;
 
-            case CREATE_EVENT:
-                eventPerformanceController.createEvent();
-                break;
+                case CREATE_EVENT:
+                    eventPerformanceController.createEvent();
+                    break;
 
-            case CANCEL_PERFORMANCE:
-                eventPerformanceController.cancelPerformance();
-                break;
+                case CANCEL_PERFORMANCE:
+                    eventPerformanceController.cancelPerformance();
+                    break;
+            }
         }
-        return true;
     }
 
     private boolean handleAdminStaffMainMenu(){
-        List<AdminMenuOptions> options = new ArrayList<>(Arrays.asList(AdminMenuOptions.values()));
-        int choice = selectFromMenu(options, "=== Admin Staff Main Menu ===");
-        AdminMenuOptions selected = options.get(choice - 1);
+        while(true) {
+            List<AdminMenuOptions> options = new ArrayList<>(Arrays.asList(AdminMenuOptions.values()));
+            int choice = selectFromMenu(options, "=== Admin Staff Main Menu ===");
+            AdminMenuOptions selected = options.get(choice - 1);
 
-        switch (selected) {
-            case LOGOUT:
-                userController.logout();
-                break;
+            switch (selected) {
+                case LOGOUT:
+                    userController.logout();
+                    return true;
 
-            case SEARCH_FOR_PERFORMANCES:
-                eventPerformanceController.searchForPerformances();
-                break;
+                case SEARCH_FOR_PERFORMANCES:
+                    eventPerformanceController.searchForPerformances();
+                    break;
 
-            case VIEW_PERFORMANCE:
-                eventPerformanceController.viewPerformance();
-                break;
+                case VIEW_PERFORMANCE:
+                    eventPerformanceController.viewPerformance();
+                    break;
 
-            case SPONSOR_PERFORMANCE:
-                eventPerformanceController.sponsorPerformance();
-                break;
+                case SPONSOR_PERFORMANCE:
+                    eventPerformanceController.sponsorPerformance();
+                    break;
+            }
         }
-
-        return true;
     }
 }
