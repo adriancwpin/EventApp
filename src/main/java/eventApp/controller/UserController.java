@@ -60,7 +60,7 @@ public class UserController extends Controller {
      * display success message
      */
     public void logout() {
-        if(currentUser != null) {
+        if(currentUser == null) {
             view.displayError("No user logged in.");
         }
 
