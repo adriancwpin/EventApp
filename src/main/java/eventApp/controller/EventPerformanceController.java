@@ -46,7 +46,16 @@ public class EventPerformanceController extends Controller{
         EntertainmentProvider ep = (EntertainmentProvider)currentUser;
 
         //ask for event details(title, type, isTicketed)
-        String title = view.getInput("\nEnter Event Title: ");
+        String title = null;
+        while(title == null || title.trim().isEmpty()){
+
+            title = (view.getInput("\nEnter Event Title: ").trim());
+
+            if(title.isEmpty()){
+                view.displayError("Event title cannot be empty");
+                continue;
+            }
+        }
 
         //show the event type menu
         List<EventType> options = new ArrayList<>(Arrays.asList(EventType.values()));
@@ -57,9 +66,9 @@ public class EventPerformanceController extends Controller{
         //check if isTicketed
         String ticketed = null;
         while(ticketed == null){
-            ticketed = view.getInput("\nIs this event ticketed? (Y/N): ");
-            if(!ticketed.equalsIgnoreCase("Y") && !ticketed.equalsIgnoreCase("N")){
-                view.displayError("Invalid input. Please enter Y or N.");
+            ticketed = view.getInput("\nIs this event ticketed? (Yes/No): ");
+            if(!ticketed.equalsIgnoreCase("Yes") && !ticketed.equalsIgnoreCase("N0")){
+                view.displayError("Invalid input. Please enter Yes or No.");
                 ticketed = null; //ask again
             }
         }
@@ -124,7 +133,15 @@ public class EventPerformanceController extends Controller{
             }
 
             //get venue
-            String venueAddress = view.getInput("\nEnter Venue Address: ");
+            String venueAddress = null;
+            while(venueAddress == null || venueAddress.trim().isEmpty()){
+                venueAddress = view.getInput("\nEnter Venue Address: ").trim();
+
+                if(venueAddress.isEmpty()){
+                    view.displayError("Venue Address cannot be empty.");
+                    continue;
+                }
+            }
             int venueCapacity = 0;
             while(venueCapacity <= 0){
                 try{
@@ -138,8 +155,8 @@ public class EventPerformanceController extends Controller{
                 }
             }
 
-            boolean venueIsOutdoors = getYesNo("\nIs the venue outdoor? (Y/N): ");
-            boolean venueAllowsSmoking = getYesNo("\nIs smoking allowed? (Y/N): ");
+            boolean venueIsOutdoors = getYesNo("\nIs the venue outdoor? (Yes/No): ");
+            boolean venueAllowsSmoking = getYesNo("\nIs smoking allowed? (Yes/No): ");
 
             //get performer names
             int numPerformers = 0;
@@ -253,7 +270,12 @@ public class EventPerformanceController extends Controller{
         Performance performance = null;
         while(performance == null){
             try{
-                long performanceID = Long.parseLong(view.getInput("\nEnter PerformanceID: "));
+                String input = view.getInput("\nEnter Performance ID (or '-1' to return): ");
+                long performanceID = Long.parseLong(input);
+
+                if(input.trim().equals("-1")){
+                    return;
+                }
 
                 performance = getPerformanceByID(performanceID);
                 if(performance == null){
@@ -287,7 +309,12 @@ public class EventPerformanceController extends Controller{
 
         while(performance == null || !performance.checkCreatedByEP(ep.getEmail()) || !performance.checkHasNotHappenedYet()){
             try{
-                long performanceID = Long.parseLong(view.getInput("Enter ID of performance to cancel: "));
+                String input = view.getInput("Enter ID of performance to cancel (or '-1' to return): ");
+                if(input.trim().equals("-1")){
+                    return;
+                }
+
+                long performanceID = Long.parseLong(input);
                 performance = getPerformanceByID(performanceID);
 
                 //performance not found
@@ -409,8 +436,15 @@ public class EventPerformanceController extends Controller{
         double sponsorshipAmount = 0;
         while(performance == null || !possible){
             try{
-                long performanceID = Long.parseLong(view.getInput("Enter Performance ID: "));
-                sponsorshipAmount = Double.parseDouble(view.getInput("Enter Sponsorship Amount: £"));
+                String input1 = view.getInput("Enter Performance ID (or '-1' to return back to dashboard.): ");
+                String input2 = view.getInput("Enter sponsorship amount (or '-1' to return back to dashboard.): £");
+
+                if(input1.trim().equals("-1") || input2.trim().equals("-1")){
+                    return;
+                }
+
+                long performanceID = Long.parseLong(view.getInput(input1));
+                sponsorshipAmount = Double.parseDouble(view.getInput(input2));
 
                 performance = getPerformanceByID(performanceID);
 

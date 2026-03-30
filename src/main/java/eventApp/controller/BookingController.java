@@ -40,8 +40,14 @@ public class BookingController extends Controller {
         //Loop until the performance is found
         while (performance == null || !checkIfBookingPossible(performance, numTicketsReq)) {
             try{
-                long performanceID = Long.parseLong(view.getInput("Enter booking info (Performance ID): "));
-                numTicketsReq = Integer.parseInt(view.getInput("Enter booking info (Number of tickets): "));
+                String input1 = view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ");
+                String input2 = view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ");
+                long performanceID = Long.parseLong(view.getInput(input1));
+                numTicketsReq = Integer.parseInt(view.getInput(input2));
+
+                if(input1.trim().equals("-1") || input2.trim().equals("-1")){
+                    return;
+                }
 
                 //get performance id
                 performance = getPerformanceByID(performanceID);
@@ -118,8 +124,15 @@ public class BookingController extends Controller {
         Performance performance = null;
         while(performance == null){
             try{
-                long performanceID = Long.parseLong(view.getInput("Enter Performance ID to review: "));
+                String input = view.getInput("Enter Performance ID to review (or '-1' to return back to dashboard): ");
+
+                if(input.trim().equals("-1")){
+                    return; //return back to dashboard
+                }
+
+                long performanceID = Long.parseLong(view.getInput(input.trim()));
                 performance = getPerformanceByID(performanceID);
+
 
                 //performance not found
                 if(performance == null){
@@ -186,7 +199,13 @@ public class BookingController extends Controller {
 
         while (booking == null) {
             try {
-                long bookingNumber = Long.parseLong(view.getInput("Enter Booking Number: "));
+                String input = view.getInput("Enter Booking Number (or '-1' to return back to dashboard: ");
+
+                if(input.trim().equals("-1")){
+                    return;
+                }
+
+                long bookingNumber = Long.parseLong(view.getInput(input.trim()));
                 booking = getBookingByNumber(bookingNumber);
 
                 if (booking == null) {

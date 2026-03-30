@@ -6,11 +6,7 @@ import eventApp.model.*;
 import eventApp.view.View;
 
 public abstract class Controller{
-    public static User currentUser; // This is not static so bookingcontroller and usercontorller have different variables of currentuser
-    // for example, usercontroller set currentuser to a
-    // eventperformance controller set currentuser to b
-    // usercontrollers current user will be a and eventperfromance controller currentuser is b
-    // if static, its like a global variable, when usercontroller change, all classes would see the change, so you dont need the other classes to like keep parity with  the other currentusers
+    protected User currentUser;
     protected View view;
 
     /**
@@ -44,9 +40,9 @@ public abstract class Controller{
         while(input == null){
             input = view.getInput(prompt);
 
-            if(!input.equalsIgnoreCase("Y") &&
-                !input.equalsIgnoreCase("N")){
-                view.displayError("Invalid input. Please enter Y or N.");
+            if(!input.equalsIgnoreCase("Yes") &&
+                !input.equalsIgnoreCase("No")){
+                view.displayError("Invalid input. Please enter Yes or No.");
                 input = null; // ask again
             }
         }
@@ -79,7 +75,7 @@ public abstract class Controller{
                 choice = Integer.parseInt(view.getInput("Enter Choice: ").trim());
 
                 if (choice < 1 || choice > options.size()){
-                    view.displayError("Invalid Choice. please try again.");
+                    view.displayError("Invalid Choice. please choose a valid number.");
                     continue;
                 }
             } catch (NumberFormatException e){
