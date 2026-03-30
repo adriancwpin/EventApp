@@ -87,6 +87,7 @@ public class MenuController extends Controller {
             case REGISTER_EP:
                 userController.registerEntertainmentProvider();
                 break;
+
         }
         return true;
     }

@@ -174,6 +174,7 @@ public class UserController extends Controller {
         //apply to to their searched performancecs
 
         view.displaySuccess("Preferences updated successfully!");
+        view.getInput("Press ENTER to return to dashboard... \n");
 
     }
 

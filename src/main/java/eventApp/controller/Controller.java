@@ -73,10 +73,18 @@ public abstract class Controller{
         }
 
         //choose the options
-        int choice = Integer.parseInt(view.getInput("Enter Choice: "));
-        if (choice < 1 || choice > options.size()){
-            view.displayError("Invalid Choice. please try again.");
-            return selectFromMenu(options, prompt);
+        int choice = 0;
+        while(choice < 1 || choice > options.size()){
+            try{
+                choice = Integer.parseInt(view.getInput("Enter Choice: ").trim());
+
+                if (choice < 1 || choice > options.size()){
+                    view.displayError("Invalid Choice. please try again.");
+                    continue;
+                }
+            } catch (NumberFormatException e){
+                view.displayError("Invalid Choice. please enter a valid number.");
+            }
         }
         return choice;
     }

@@ -99,6 +99,7 @@ public class BookingController extends Controller {
         view.displaySuccess("Booking Successful");
         String bookingRecord = booking.generateBookingRecord();
         view.displayBookingRecord(bookingRecord);
+        view.getInput("Press ENTER to return to dashboard... \n");
     }
 
     public void reviewPerformance(){
@@ -170,6 +171,7 @@ public class BookingController extends Controller {
         performance.review(rating, comment);
 
         view.displaySuccess("Review submitted successfully!");
+        view.getInput("Press ENTER to return to dashboard... \n");
     }
 
     public void cancelBooking() {
@@ -246,6 +248,7 @@ public class BookingController extends Controller {
         performance.setNumTicketsSold(performance.getNumTicketsSold() - numTicketsBought);
 
         view.displaySuccess("Booking cancelled successfully.");
+        view.getInput("Press ENTER to return to dashboard... \n");
     }
 
     private void addBooking(Booking b){
