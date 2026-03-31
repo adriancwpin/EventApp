@@ -52,7 +52,7 @@ public abstract class Controller{
 
     //private helper method for email validation using regex
     protected boolean isValidEmail(String email){
-        String emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        String emailRegex = "(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
         return email.matches(emailRegex);
     }
 
