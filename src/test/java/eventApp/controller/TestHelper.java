@@ -22,9 +22,6 @@ public class TestHelper {
         when(view.getInput("Enter email: ")).thenReturn(email);
         when(view.getInput("Enter password: ")).thenReturn(password);
 
-        // approve business number
-        when(verificationService.verifyEntertainmentProvider(businessNumber)).thenReturn(true);
-
         userController.registerEntertainmentProvider();
 
         // Reset currentUser
@@ -45,9 +42,9 @@ public class TestHelper {
 
     public static void loginAsEP(UserController userController, View view,
                                  VerificationService verificationService){
-        registerTestEP(userController, view, verificationService,
-                "Music Corp", "BN12345678", "Smith",
-                "We organise music events", "ep@test.com", "ep123");
+        TestHelper.registerTestEP(userController, view, verificationService,
+                "Test org", "BN87654321", "John",
+                "We organise tests", "newep@test.com", "testep321");
         when(view.getInput("Enter email: ")).thenReturn("ep@test.com");
         when(view.getInput("Enter password: ")).thenReturn("ep123");
         userController.login();
