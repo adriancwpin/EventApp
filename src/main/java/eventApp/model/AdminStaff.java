@@ -3,7 +3,7 @@ package eventApp.model;
 public class AdminStaff extends User{
     private String name;
 
-    public AdminStaff(String name, String email, String password) {
+    public AdminStaff(String email, String password, String name) {
         super(email, password);
         this.name = name;
     }
