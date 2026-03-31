@@ -102,7 +102,7 @@ public class MenuController extends Controller {
             switch (selected) {
                 case LOGOUT:
                     userController.logout();
-                    break;
+                    return true;
 
                 case SEARCH_FOR_PERFORMANCES:
                     eventPerformanceController.searchForPerformances();

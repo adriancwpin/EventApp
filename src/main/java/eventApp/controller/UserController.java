@@ -135,6 +135,16 @@ public class UserController extends Controller {
         // reset preferences
         StudentPreferences pref = student.getPreferences();
 
+        //show current preferences
+        System.out.println("\n=== Current Preferences ===");
+        System.out.println("1. Music: "   + (pref.preferMusicEvents   ? "✓" : ""));
+        System.out.println("2. Theatre: " + (pref.preferTheatreEvents ? "✓" : ""));
+        System.out.println("3. Dance: "   + (pref.preferDanceEvents   ? "✓" : ""));
+        System.out.println("4. Movie: "   + (pref.preferMovieEvents   ? "✓" : ""));
+        System.out.println("5. Sports: "  + (pref.preferSportsEvents  ? "✓" : ""));
+        System.out.println();
+
+        //asking for new preference
         List<String> selectedPref = new ArrayList<>();
 
         for (int i = 1; i <= 3; i++){
@@ -169,19 +179,28 @@ public class UserController extends Controller {
             selectedPref.add(input);
         }
 
+        if(selectedPref.isEmpty()){
+            view.displayError("Please select at least one preference.");
+            editPreferences();
+            return;
+        }
+
         //update preferences
         boolean success = student.getPreferences().updatePreference(String.join(",", selectedPref));
 
-        //if not valid then give error
-        if(!success){
-            view.displayError("Something wrong. Please update the preferences again.");
-            editPreferences(); //ask again
-            return;
-        }
-        //replace any previosuly saved preferences
-        //apply to to their searched performancecs
+        if(success){
+            //show updated preferences
+            System.out.println("\n=== Updated Preferences ===");
+            System.out.println("1. Music: "   + (pref.preferMusicEvents   ? "✓" : ""));
+            System.out.println("2. Theatre: " + (pref.preferTheatreEvents ? "✓" : ""));
+            System.out.println("3. Dance: "   + (pref.preferDanceEvents   ? "✓" : ""));
+            System.out.println("4. Movie: "   + (pref.preferMovieEvents   ? "✓" : ""));
+            System.out.println("5. Sports: "  + (pref.preferSportsEvents  ? "✓" : ""));
 
-        view.displaySuccess("Preferences updated successfully!");
+            view.displaySuccess("Preferences update successfully!");
+        } else{
+            view.displayError("Something wrong. Please update the preferences again.");
+        }
         view.getInput("Press ENTER to return to dashboard... \n");
 
     }
@@ -217,9 +236,9 @@ public class UserController extends Controller {
         ));
 
         addUser(new AdminStaff(
-                "admin@test.com",  // email
-                "admin123",        // password
-                "Anasa"            // name
+                "Anasa",  // name
+                "admin@test.com", // email
+                "admin123"  // password
         ));
     }
 
