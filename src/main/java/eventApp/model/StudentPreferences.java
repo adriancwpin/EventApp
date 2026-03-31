@@ -7,6 +7,16 @@ public class StudentPreferences {
     public boolean preferSportsEvents;
     public boolean preferDanceEvents;
 
+
+    /**
+     * Updates the student's preferences based on a comma-separated string of event types.
+     * Resets all preferences to false before applying the new ones.
+     * Valid event types are MUSIC, THEATRE, DANCE, MOVIE, SPORTS.
+     * A maximum of 3 preferences can be set at a time.
+     *
+     * @param studentRawStringPreferences a comma-separated string of preferred event types
+     * @return true if preferences were updated successfully, false if more than 3 were provided
+     */
     public boolean updatePreference(String studentRawStringPreferences){
         //initalise all preference to false
         preferMusicEvents = false;

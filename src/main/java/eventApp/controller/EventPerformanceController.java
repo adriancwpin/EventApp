@@ -35,6 +35,17 @@ public class EventPerformanceController extends Controller{
     }
 
     //Methods
+
+    /**
+     *Creates a new event with one or more performances for the logged-in entertainment provider
+     *
+     * Prompt the EP for event details (title, type, is ticketed and collect
+     * details for each performance (dates, venue, performers, tickets).
+     * validates that end time is after start time, no time clashes, and
+     * ticket count does not exceed venue capacity.
+     *
+     * @return the new created Event, or null if creation failed.
+     */
     public Event createEvent() {
         //Check if the current user is EP
         if(!checkCurrentUserIsEntertainmentProvider()){
@@ -234,6 +245,15 @@ public class EventPerformanceController extends Controller{
         return event;
     }
 
+    /**
+     * Searches for performance on a given date across all events in the system.
+     *
+     * Prompts the user to enter a date and displays all performance scheduled
+     * on that date. If the current user is a student, results are sorted so that performances matching their preferences
+     * appear first.
+     *
+     * Display an error if no performances are found on the given date.
+     */
     public void searchForPerformances(){
         //ask for a date to search
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -271,6 +291,14 @@ public class EventPerformanceController extends Controller{
         view.getInput("Press ENTER to return to dashboard...\n");
     }
 
+    /**
+     * Display detailed information about a specific performance.
+     * Prompts the user to enter a performance ID and displays full details
+     * including venue, timings, performers, ticket availability, ticket price,
+     * average rating, and individual reviews.
+     * Displays an error if the performance ID is not found.
+     * The user can enter -1 to return to the dashboard without viewing.
+     */
     public void viewPerformance(){
         //give performanceID
         //if incorrect ID, system asks for it again
@@ -302,6 +330,21 @@ public class EventPerformanceController extends Controller{
         view.getInput("Press ENTER to return to dashboard...\n");
     }
 
+    /**
+     * Cancels a performance and refunds all affected students.
+     *
+     * Only the Entertainment Provider who owns the performance may cancel it.
+     * The performance must not have already taken place. If there are active bookings,
+     * refund are processed via the payment system before cancellation proceeds. A
+     * cancellation message must be provided for affected students.
+     *
+     * Displays an error and returns early if:
+     * The current user is not an Entertainment Provider
+     * The performance does not belong to the logged-in EP
+     * The performance has already taken place
+     * A refund fails for any active booking
+     *
+     */
     public void cancelPerformance(){
         //only EP is allowed to cancel performance
         if(!checkCurrentUserIsEntertainmentProvider()){
@@ -327,13 +370,13 @@ public class EventPerformanceController extends Controller{
                 //performance not found
                 if(performance == null){
                     view.displayError("Performance with given number does not exists.");
-                    return;
+                    continue;
                 }
 
                 //check created by EP
                 if(!performance.checkCreatedByEP(ep.getEmail())){
                     view.displayError("The performance with given number does not belong to you.");
-                    return;
+                    continue;
                 }
 
                 //check if the event has happened
@@ -341,11 +384,11 @@ public class EventPerformanceController extends Controller{
 
                 if(!hasNotHappenedYet){
                     view.displayError("Performance cannot be cancelled as it has already happened.");
-                    return;
+                    continue;
                 }
             }catch (NumberFormatException e){
                 view.displayError("Invalid ID, please enter a number.");
-                return;
+                performance = null;
             }
         }
 
@@ -405,6 +448,7 @@ public class EventPerformanceController extends Controller{
         view.getInput("Press ENTER to return to dashboard... \n");
     }
 
+
     private boolean checkIfSponsorshipPossible(Performance performance, double amount){
         boolean isTicketed = performance.checkIfEventIsTicketed();
 
@@ -431,6 +475,19 @@ public class EventPerformanceController extends Controller{
         return true;
     }
 
+    /**
+     * Sponsors a performance by reducing its ticket price by a given amount.
+     * Only Admin Staff may sponsor a performance. The performance must be ticketed
+     * and not already sponsored. The sponsorship amount must be non-negative and
+     * no greater than the current ticket price.
+     * Displays an error and returns early if:
+     * The current user is not Admin Staff
+     * The performance is already sponsored
+     * The event is not ticketed
+     * The sponsorship amount is invalid
+     * The performance ID is not found
+     *
+     */
     public void sponsorPerformance(){
         //Only admin staff can sponsor performance
         if(!checkCurrentUserIsAdmin()){

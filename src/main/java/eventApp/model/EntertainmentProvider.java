@@ -40,5 +40,7 @@ public class EntertainmentProvider extends User {
         return description;
     }
 
-    public void addEvent(Event event) {}
+    public void addEvent(Event event) {
+        events.add(event);
+    }
 }

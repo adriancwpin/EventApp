@@ -70,6 +70,14 @@ public class UserController extends Controller {
         view.displaySuccess("You have been logged out successfully.");
     }
 
+    /**
+     * Register a new Entertainment Provider in the system.
+     *
+     * <p> Prompts the user for organisation details and validates the email format
+     * checks that the account does not exist, and verifies the business number
+     * via the external verification service. If passed, then a new account is created and added
+     * to the system.
+     */
     public void registerEntertainmentProvider() {
         //Ask for EP details eg orgName
         String orgName = view.getInput("Enter organisation name: ");
@@ -122,6 +130,14 @@ public class UserController extends Controller {
         return false;
     }
 
+    /**
+     * Allows a logged-in student to edit their event type preferences
+     *
+     *<p> Prompt the students to select up to 3 preferred event types from:
+     * MUSIC, THEATRE, DANCE, MOVIE, SPORTS. At least one preference must be selected.
+     * Duplicated selections and invalid inputs are rejected.
+     *
+     */
     public void editPreferences(){
         //make sure only student can edit preferences
         if(!checkCurrentUserIsStudent()){
@@ -226,7 +242,6 @@ public class UserController extends Controller {
 
     private void addPreregisteredUsers() {
         addUser(new Student("student@test.com", "password123", "John", 123456));
-        addUser(new Student("student2@test.com", "password999", "Jane", 999999));
         addUser(new EntertainmentProvider(
                 "ep@test.com",              // email
                 "ep123",                    // password
@@ -237,9 +252,9 @@ public class UserController extends Controller {
         ));
 
         addUser(new AdminStaff(
-                "admin@test.com", // email
-                "admin123",  // password
-                "Anasa"  // name
+                "admin@test.com",  // name
+                "admin123", // email
+                "Anasa"  // password
         ));
     }
 
