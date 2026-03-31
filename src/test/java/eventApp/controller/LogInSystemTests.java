@@ -67,8 +67,8 @@ class LogInSystemTests extends SystemInitialisation{
     @DisplayName("EP login fails with wrong credentials")
     void testEPLoginWrongCredentialsAfterRegistration() {
         TestHelper.registerTestEP(userController, view, verificationService,
-                "Music Corp", "BN12345678", "Smith",
-                "We organise music events", "ep@test.com", "ep123");
+                "Test org", "BN87654321", "John",
+                "We organise tests", "newep@test.com", "testep321");
 
         when(view.getInput("Enter email: ")).thenReturn("ep@test.com");
         when(view.getInput("Enter password: ")).thenReturn("wrongpassword");

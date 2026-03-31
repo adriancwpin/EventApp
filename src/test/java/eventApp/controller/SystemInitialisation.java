@@ -1,5 +1,6 @@
 package eventApp.controller;
 
+import eventApp.external.MockVerificationService;
 import eventApp.external.VerificationService;
 import eventApp.model.User;
 import eventApp.view.View;
@@ -22,8 +23,8 @@ public abstract class SystemInitialisation {
 
         // create a mock version of view
         view = mock(View.class);
-        verificationService = mock(VerificationService.class);
-        userController = new UserController(users, view, null);
+        verificationService = new MockVerificationService();
+        userController = new UserController(users, view, verificationService);
         userController.setCurrentUser(null);
     }
 }
