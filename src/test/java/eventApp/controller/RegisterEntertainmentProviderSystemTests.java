@@ -21,7 +21,7 @@ class RegisterEntertainmentProviderSystemTests extends SystemInitialisation{
 
     // FAILURE CASES
     // CASE 1 when business number is not verified
-    // use a number that is not valid
+    // use a business number that is not valid
 
     @Test
     @DisplayName("Registration fails when business number is not verified")
@@ -38,6 +38,8 @@ class RegisterEntertainmentProviderSystemTests extends SystemInitialisation{
         // verify the error is caught
         verify(view).displayError("Business number is not verified!");
     }
+
+    // test was failing because verifyEntertainmentProvider was a static method
 
     // Case 2
     // Register once and then try to register again
@@ -67,6 +69,7 @@ class RegisterEntertainmentProviderSystemTests extends SystemInitialisation{
         when(view.getInput("Enter description: ")).thenReturn("We organise tests");
 
         // return invalid first, then valid on the second call since its a loop
+        // Test case first failed by running forever when not using thenReturn twice, to get the second input
         when(view.getInput("Enter email: ")).thenReturn("invalidemail.com").thenReturn("newep@test.com");
 
         userController.registerEntertainmentProvider();

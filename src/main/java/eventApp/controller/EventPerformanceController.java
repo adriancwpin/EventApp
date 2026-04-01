@@ -185,7 +185,7 @@ public class EventPerformanceController extends Controller{
             double ticketPrice = 0.0;
 
             if(isTicketed){
-                while (numTickets <= 0 || ticketPrice <= 0){
+                while (numTickets <= 0 || ticketPrice <= 0 || numTickets > venueCapacity){
                     try{
                         numTickets = Integer.parseInt(view.getInput("\nNumber of tickets: "));
                         ticketPrice = Double.parseDouble(view.getInput("\nEnter Ticket Price: "));
