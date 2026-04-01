@@ -1,9 +1,5 @@
 package eventApp.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import eventApp.external.MockVerificationService;
-import eventApp.external.PaymentSystem;
-import eventApp.model.*;
 import org.junit.jupiter.api.*;
 import static org.mockito.Mockito.*;
 

@@ -78,7 +78,8 @@ class BookPerformanceSystemTests extends SystemInitialisation{
     @DisplayName("Student fails to books performance, payment issue")
     void testBookPerformanceFailure_PaymentIssue(){
         PaymentSystem paymentSystemFailure = mock(PaymentSystem.class);
-        when(paymentSystemFailure.processPayment(anyInt(), anyString(), anyString(), anyInt(), anyString(), anyDouble())).thenReturn(false);
+        when(paymentSystemFailure.processPayment(anyInt(), anyString(), anyString()
+                , anyInt(), anyString(), anyDouble())).thenReturn(false);
 
         bookingController = new BookingController(bookings, performances, view, paymentSystemFailure);
 
@@ -91,5 +92,22 @@ class BookPerformanceSystemTests extends SystemInitialisation{
 
         // verify error is caught
         verify(view).displayError("There was an issue with payment.");
+    }
+
+    // EARLY RETURN CASE
+    @Test
+    @DisplayName("Student fails to books performance, performanceID doesn't exist")
+    void testBookPerformanceEarlyReturn(){
+        TestHelper.loginAsEP(userController, view, verificationService);
+        Event event = TestHelper.createTestEvent(eventPerformanceController, view);
+
+        // now student can book event
+        TestHelper.loginAsStudent(userController, view);
+        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ")).thenReturn("-1");
+        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ")).thenReturn("5");
+        bookingController.bookPerformance();
+
+        // verify booking is then not successful
+        verify(view, never()).displaySuccess("Booking Successful");
     }
 }

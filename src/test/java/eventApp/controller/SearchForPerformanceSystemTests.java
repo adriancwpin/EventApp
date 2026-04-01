@@ -48,7 +48,7 @@ class SearchForPerformanceSystemTests extends SystemInitialisation{
 
         // now event is created, student can search for performance
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("0100/01/20").thenReturn("01/01/2000");
+        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("0100/01/20").thenReturn("01/01/3000");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         eventPerformanceController.searchForPerformances();
 
@@ -68,7 +68,7 @@ class SearchForPerformanceSystemTests extends SystemInitialisation{
 
         // now event is created, student can search for performance
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("25/02/2026");
+        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("25/02/3026");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
 
         eventPerformanceController.searchForPerformances();

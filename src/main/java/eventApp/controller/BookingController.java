@@ -205,7 +205,7 @@ public class BookingController extends Controller {
                     return;
                 }
 
-                long bookingNumber = Long.parseLong(view.getInput(input.trim()));
+                long bookingNumber = Long.parseLong(input.trim());
                 booking = getBookingByNumber(bookingNumber);
 
                 if (booking == null) {

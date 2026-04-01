@@ -226,6 +226,7 @@ public class UserController extends Controller {
 
     private void addPreregisteredUsers() {
         addUser(new Student("student@test.com", "password123", "John", 123456));
+        addUser(new Student("student2@test.com", "password999", "Jane", 999999));
         addUser(new EntertainmentProvider(
                 "ep@test.com",              // email
                 "ep123",                    // password

@@ -56,9 +56,9 @@ public class TestHelper {
         when(view.getInput("Enter Choice: ")).thenReturn("1");
         when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Yes");
         when(view.getInput("\nNumber of performances: ")).thenReturn("1");
-        when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("01/01/2000");
+        when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("01/01/3000");
         when(view.getInput("Enter Start Time (HH:mm): ")).thenReturn("00:00");
-        when(view.getInput("Enter End Date (dd/MM/yyyy): ")).thenReturn("10/10/2000");
+        when(view.getInput("Enter End Date (dd/MM/yyyy): ")).thenReturn("10/10/3000");
         when(view.getInput("Enter End Time (HH:mm): ")).thenReturn("11:11");
         when(view.getInput("\nEnter Venue Address: ")).thenReturn("Test address 1");
         when(view.getInput("\nEnter Venue Capacity: ")).thenReturn("50");
@@ -73,15 +73,24 @@ public class TestHelper {
     }
 
     public static void searchTestPerformances(EventPerformanceController eventPerformanceController, View view){
-        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("01/01/2000");
+        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("01/01/3000");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         eventPerformanceController.searchForPerformances();
     }
 
     public static void bookTestPerformance(BookingController bookingController, View view, PaymentSystem paymentSystem){
-        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ")).thenReturn("1");
-        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ")).thenReturn("5");
+        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("1");
+        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("5");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         bookingController.bookPerformance();
     }
+
+    public static void loginAsStudent2(UserController userController, View view){
+        when(view.getInput("Enter email: ")).thenReturn("student2@test.com");
+        when(view.getInput("Enter password: ")).thenReturn("password999");
+        userController.login();
+    }
+
 }
