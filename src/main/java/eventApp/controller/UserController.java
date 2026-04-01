@@ -236,9 +236,9 @@ public class UserController extends Controller {
         ));
 
         addUser(new AdminStaff(
-                "Anasa",  // name
                 "admin@test.com", // email
-                "admin123"  // password
+                "admin123",  // password
+                "Anasa"  // name
         ));
     }
 

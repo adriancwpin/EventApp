@@ -42,8 +42,8 @@ public class BookingController extends Controller {
             try{
                 String input1 = view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ");
                 String input2 = view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ");
-                long performanceID = Long.parseLong(view.getInput(input1));
-                numTicketsReq = Integer.parseInt(view.getInput(input2));
+                long performanceID = Long.parseLong(input1);
+                numTicketsReq = Integer.parseInt(input2);
 
                 if(input1.trim().equals("-1") || input2.trim().equals("-1")){
                     return;

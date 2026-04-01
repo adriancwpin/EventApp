@@ -1,10 +1,7 @@
 package eventApp.controller;
 
-import eventApp.external.MockVerificationService;
 import org.junit.jupiter.api.*;
 import static org.mockito.Mockito.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterEntertainmentProviderSystemTests extends SystemInitialisation{
 

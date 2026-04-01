@@ -1,5 +1,6 @@
 package eventApp.controller;
 
+import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import eventApp.external.VerificationService;
 import eventApp.view.View;
@@ -69,5 +70,18 @@ public class TestHelper {
         when(view.getInput("\nEnter Ticket Price: ")).thenReturn("5");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         return eventPerformanceController.createEvent();
+    }
+
+    public static void searchTestPerformances(EventPerformanceController eventPerformanceController, View view){
+        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("01/01/2000");
+        when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
+        eventPerformanceController.searchForPerformances();
+    }
+
+    public static void bookTestPerformance(BookingController bookingController, View view, PaymentSystem paymentSystem){
+        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ")).thenReturn("1");
+        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ")).thenReturn("5");
+        when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
+        bookingController.bookPerformance();
     }
 }
