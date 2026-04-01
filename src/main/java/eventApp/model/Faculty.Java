@@ -14,13 +14,9 @@ public class FacultyMember extends User {
         return loginAttempts;
     }
 
-    /Increment login attempts
+    /Increment
     public void incrementLoginAttempts() {
         loginAttempts++;
     }
 
-    /Optionally, setter if needed
-    public void setLoginAttempts(int attempts) {
-        this.loginAttempts = attempts;
-    }
 }
