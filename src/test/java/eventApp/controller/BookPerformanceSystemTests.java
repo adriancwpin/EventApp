@@ -44,8 +44,10 @@ class BookPerformanceSystemTests extends SystemInitialisation{
 
         // now student can book event
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ")).thenReturn("100").thenReturn("1");
-        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ")).thenReturn("5");
+        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("100").thenReturn("1");
+        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("5");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         bookingController.bookPerformance();
 
@@ -67,8 +69,10 @@ class BookPerformanceSystemTests extends SystemInitialisation{
 
         // now student can book event
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ")).thenReturn("abc").thenReturn("1");
-        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ")).thenReturn("5");
+        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("abc").thenReturn("1");
+        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("5");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         bookingController.bookPerformance();
 
@@ -114,8 +118,10 @@ class BookPerformanceSystemTests extends SystemInitialisation{
 
         // now student can book event
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard): ")).thenReturn("-1");
-        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard): ")).thenReturn("5");
+        when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("-1");
+        when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard)" +
+                ": ")).thenReturn("5");
         bookingController.bookPerformance();
 
         // verify booking is then not successful

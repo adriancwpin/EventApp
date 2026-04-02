@@ -25,7 +25,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         // EP can now cancel performance
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("1");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return)" +
+                ": ")).thenReturn("1");
         when(view.getInput("Provide a cancellation message for affected students" +
                 ": ")).thenReturn("Apologies event was cancelled");
         when(view.getInput("Press ENTER to return to dashboard... \n")).thenReturn("");
@@ -54,7 +55,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         // EP can now cancel performance
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("1");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return)" +
+                ": ")).thenReturn("1");
         when(view.getInput("Provide a cancellation message for affected students" +
                 ": ")).thenReturn("Apologies event was cancelled");
         when(view.getInput("Press ENTER to return to dashboard... \n")).thenReturn("");
@@ -205,7 +207,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
 
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("1");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return)" +
+                ": ")).thenReturn("1");
         when(view.getInput("Provide a cancellation message for affected students" +
                 ": ")).thenReturn("").thenReturn("Apologies event was cancelled");
         when(view.getInput("Press ENTER to return to dashboard... \n")).thenReturn("");
@@ -231,7 +234,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         when(paymentSystemFailure.processPayment(anyInt(), anyString(), anyString()
                 , anyInt(), anyString(), anyDouble())).thenReturn(false);
 
-        eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystemFailure);
+        eventPerformanceController = new EventPerformanceController(events, performances,
+                view, paymentSystemFailure);
 
         TestHelper.loginAsEP(userController, view, verificationService);
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
@@ -241,7 +245,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         TestHelper.bookTestPerformance(bookingController, view, paymentSystemFailure);
 
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("1");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return)" +
+                ": ")).thenReturn("1");
         when(view.getInput("Provide a cancellation message for affected students" +
                 ": ")).thenReturn("Apologies event was cancelled");
 

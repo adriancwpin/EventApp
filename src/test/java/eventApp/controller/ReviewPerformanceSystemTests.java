@@ -1,7 +1,5 @@
 package eventApp.controller;
 
-import eventApp.enums.BookingStatus;
-import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import org.junit.jupiter.api.*;
 

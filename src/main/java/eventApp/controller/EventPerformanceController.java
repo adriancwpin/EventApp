@@ -508,8 +508,8 @@ public class EventPerformanceController extends Controller{
                     return;
                 }
 
-                long performanceID = Long.parseLong(view.getInput(input1));
-                sponsorshipAmount = Double.parseDouble(view.getInput(input2));
+                long performanceID = Long.parseLong(input1);
+                sponsorshipAmount = Double.parseDouble(input2);
 
                 performance = getPerformanceByID(performanceID);
 

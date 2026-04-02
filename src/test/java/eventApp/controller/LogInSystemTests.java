@@ -15,9 +15,12 @@ class LogInSystemTests extends SystemInitialisation{
     void testStudentLogInSuccess() {
         TestHelper.loginAsStudent(userController, view);
 
-        assertNotNull(userController.getCurrentUser(), "currentUser should not be null after successful login");
-        assertTrue(userController.checkCurrentUserIsStudent(), "logged in user should be a Student");
-        assertFalse(userController.checkCurrentUserIsGuest(), "user should no longer be a guest");
+        assertNotNull(userController.getCurrentUser(),
+                "currentUser should not be null after successful login");
+        assertTrue(userController.checkCurrentUserIsStudent(),
+                "logged in user should be a Student");
+        assertFalse(userController.checkCurrentUserIsGuest(),
+                "user should no longer be a guest");
     }
 
     // create tests for admin login
@@ -28,9 +31,12 @@ class LogInSystemTests extends SystemInitialisation{
     void testAdminLoginCorrectCredentials() {
         TestHelper.loginAsAdmin(userController, view);
 
-        assertNotNull(userController.getCurrentUser(), "currentUser should not be null after successful admin login");
-        assertTrue(userController.checkCurrentUserIsAdmin(), "logged in user should be AdminStaff");
-        assertFalse(userController.checkCurrentUserIsGuest());
+        assertNotNull(userController.getCurrentUser(),
+                "currentUser should not be null after successful admin login");
+        assertTrue(userController.checkCurrentUserIsAdmin(),
+                "logged in user should be AdminStaff");
+        assertFalse(userController.checkCurrentUserIsGuest(),
+                "user should no longer be a guest");
     }
 
     // create tests for EP
@@ -40,7 +46,8 @@ class LogInSystemTests extends SystemInitialisation{
     void testEPLoginCorrectCredentialsAfterRegistration() {
         TestHelper.loginAsEP(userController, view, verificationService);
 
-        assertNotNull(userController.getCurrentUser(), "EP should be logged in after registration");
+        assertNotNull(userController.getCurrentUser(),
+                "EP should be logged in after registration");
         assertTrue(userController.checkCurrentUserIsEntertainmentProvider(),
                 "logged in user should be an EntertainmentProvider");
         assertFalse(userController.checkCurrentUserIsGuest());
@@ -60,31 +67,86 @@ class LogInSystemTests extends SystemInitialisation{
         assertTrue(userController.checkCurrentUserIsGuest());
     }
 
-    // EP failure case
-    // Don't need to check all cases when either email or password is incorrect
+    // EP failure cases
 
     @Test
-    @DisplayName("EP login fails with wrong credentials")
-    void testEPLoginWrongCredentialsAfterRegistration() {
+    @DisplayName("EP login fails wrong email and password")
+    void testEPLoginWrongEmailAndPassword() {
         TestHelper.registerTestEP(userController, view, verificationService,
                 "Test org", "BN87654321", "John",
                 "We organise tests", "newep@test.com", "testep321");
 
-        when(view.getInput("Enter email: ")).thenReturn("ep@test.com");
+        when(view.getInput("Enter email: ")).thenReturn("wrong@test.com");
         when(view.getInput("Enter password: ")).thenReturn("wrongpassword");
 
         userController.login();
 
-        assertNull(userController.getCurrentUser(), "Wrong password should not log EP in");
+        assertNull(userController.getCurrentUser(), "Wrong credentials should not log EP in");
         assertFalse(userController.checkCurrentUserIsEntertainmentProvider());
     }
 
-    // pre-registered users failure case
+    @Test
+    @DisplayName("EP login fails wrong email and correct password")
+    void testEPLoginWrongEmailAndCorrectPassword() {
+        TestHelper.registerTestEP(userController, view, verificationService,
+                "Test org", "BN87654321", "John",
+                "We organise tests", "newep@test.com", "testep321");
+
+        when(view.getInput("Enter email: ")).thenReturn("wrong@test.com");
+        when(view.getInput("Enter password: ")).thenReturn("testep321");
+
+        userController.login();
+
+        assertNull(userController.getCurrentUser(), "Wrong email should not log EP in");
+        assertFalse(userController.checkCurrentUserIsEntertainmentProvider());
+    }
 
     @Test
-    @DisplayName("Pre-registered user login fails with wrong credentials")
-    void testPreRegisteredUserLoginWrongCredentials(){
+    @DisplayName("EP login fails correct email and wrong password")
+    void testEPLoginCorrectEmailAndWrongPassword() {
+        TestHelper.registerTestEP(userController, view, verificationService,
+                "Test org", "BN87654321", "John",
+                "We organise tests", "newep@test.com", "testep321");
+
+        when(view.getInput("Enter email: ")).thenReturn("newep@test.com");
+        when(view.getInput("Enter password: ")).thenReturn("wrongpassword");
+
+        userController.login();
+
+        assertNull(userController.getCurrentUser(), "Wrong credentials should not log EP in");
+        assertFalse(userController.checkCurrentUserIsEntertainmentProvider());
+    }
+
+    // pre-registered users failure cases
+
+    @Test
+    @DisplayName("Pre-registered user login fails with wrong email and password")
+    void testPreRegisteredUserLoginWrongEmailAndPassword(){
         when(view.getInput("Enter email: ")).thenReturn("wrong@email.com");
+        when(view.getInput("Enter password: ")).thenReturn("wrongpassword");
+
+        userController.login();
+
+        assertNull(userController.getCurrentUser(), "Wrong credentials should not log user in");
+        assertTrue(userController.checkCurrentUserIsGuest(), "user should still be a guest");
+    }
+
+    @Test
+    @DisplayName("Pre-registered user login fails with wrong email and correct password")
+    void testPreRegisteredUserLoginWrongEmailAndCorrectPassword(){
+        when(view.getInput("Enter email: ")).thenReturn("wrong@email.com");
+        when(view.getInput("Enter password: ")).thenReturn("password123");
+
+        userController.login();
+
+        assertNull(userController.getCurrentUser(), "Wrong credentials should not log user in");
+        assertTrue(userController.checkCurrentUserIsGuest(), "user should still be a guest");
+    }
+
+    @Test
+    @DisplayName("Pre-registered user login fails with correct email and wrong password")
+    void testPreRegisteredUserLoginWrongCredentials(){
+        when(view.getInput("Enter email: ")).thenReturn("student@test.com");
         when(view.getInput("Enter password: ")).thenReturn("wrongpassword");
 
         userController.login();

@@ -4,8 +4,6 @@ import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import eventApp.external.VerificationService;
 import eventApp.view.View;
-import java.util.*;
-import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -51,7 +49,8 @@ public class TestHelper {
         userController.login();
     }
 
-    public static Event createTestEvent(EventPerformanceController eventPerformanceController, View view){
+    public static Event createTestEvent(EventPerformanceController eventPerformanceController,
+                                        View view){
         when(view.getInput("\nEnter Event Title: ")).thenReturn("Test Concert");
         when(view.getInput("Enter Choice: ")).thenReturn("1");
         when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Yes");
@@ -72,7 +71,8 @@ public class TestHelper {
         return eventPerformanceController.createEvent();
     }
 
-    public static Event createTestEventInPast(EventPerformanceController eventPerformanceController, View view){
+    public static Event createTestEventInPast(EventPerformanceController eventPerformanceController,
+                                              View view){
         when(view.getInput("\nEnter Event Title: ")).thenReturn("Test Concert");
         when(view.getInput("Enter Choice: ")).thenReturn("1");
         when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Yes");
@@ -93,13 +93,16 @@ public class TestHelper {
         return eventPerformanceController.createEvent();
     }
 
-    public static void searchTestPerformances(EventPerformanceController eventPerformanceController, View view){
-        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("01/01/3000");
+    public static void searchTestPerformances(EventPerformanceController eventPerformanceController,
+                                              View view){
+        when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): "))
+                .thenReturn("01/01/3000");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
         eventPerformanceController.searchForPerformances();
     }
 
-    public static void bookTestPerformance(BookingController bookingController, View view, PaymentSystem paymentSystem){
+    public static void bookTestPerformance(BookingController bookingController, View view,
+                                           PaymentSystem paymentSystem){
         when(view.getInput("Enter Performance ID (or '-1' to return back to dashboard)" +
                 ": ")).thenReturn("1");
         when(view.getInput("Enter Number of tickets (or '-1' to return back to dashboard)" +
