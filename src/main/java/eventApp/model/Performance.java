@@ -132,10 +132,18 @@ public class Performance {
     }
 
     //methods
+
+    /**
+     * Cancel this performance by setting its status to CANCELLED
+     */
     public void cancel(){
         this.status = PerformanceStatus.CANCELLED;
     }
 
+    /**
+     * Check whether the event associated with this performance is ticketed
+     * @return true if event is ticketed, false otherwise
+     */
     public boolean checkIfEventIsTicketed(){
         Event event = getEvent();
         if(event == null){
@@ -144,10 +152,20 @@ public class Performance {
         return event.isTicketed();
     }
 
+    /**
+     * Check whether enough tickets are available for the requested number
+     * @param numTicketsRequested the number of tickets the student wants to book
+     * @return true if enough tickets, false otherwise.
+     */
     public boolean checkIfTicketsLeft(int numTicketsRequested){
         return (numTicketsTotal - numTicketsSold) >= numTicketsRequested;
     }
 
+    /**
+     * Returns the final tickets of the event after applying any sponsorship discount.
+     * If the performance is not sponsored, then the original ticket price is displayed
+     * @return the final ticket price
+     */
     public double getFinalTicketPrice() {
         if(isSponsored){
             return ticketPrice - sponsoredAmount;
@@ -156,6 +174,11 @@ public class Performance {
         return ticketPrice;
     }
 
+    /**
+     * Returns the email of the organiser of the event this performance belongs to.
+     * @return the organiser email, or null if no event is set
+     *
+     */
     public String getOrganiserEmail(){
         if(event == null){
             return null;
@@ -163,6 +186,10 @@ public class Performance {
         return event.getOrganiserEmail();
     }
 
+    /**
+     * Returns the title of the event this performance belongs to.
+     * @return the event title, or "Unknown Event" if no event is set
+     */
     public String getEventTitle(){
         if(event == null){
             return "Unknown Event"; //null check
@@ -170,6 +197,10 @@ public class Performance {
         return event.getTitle();
     }
 
+    /**
+     * Checks whether this performance has not yet taken place.
+     * @return true if the performance has not happened yet, false otherwise
+     */
     public boolean checkHasNotHappenedYet(){
         LocalDateTime pStartDateTime = getStartDateTime();
 
@@ -180,6 +211,11 @@ public class Performance {
         return true; // has not happened
     }
 
+    /**
+     * Checks whether this performance was created by the given Entertainment Provider.
+     * @param email the email of the Entertianment Provider to check against
+     * @return true if organiser email matches, false otherwise.
+     */
     public boolean checkCreatedByEP(String email){
         //get event -> get organiser email -> compare with the EP email
         Event event = getEvent();
@@ -191,6 +227,10 @@ public class Performance {
         return true;
     }
 
+    /**
+     * Checks whether this performance has at least one active booking.
+     * @return true if there is at least one active booking,false otherwise.
+     */
     public boolean hasActiveBookings(){
         //iterate the bookings
         //check if at least one of them is ACTIVE
@@ -203,6 +243,12 @@ public class Performance {
         return false;
     }
 
+    /**
+     * Return a formatted string of booking details for all active bookings.
+     * Each entry contains student emails, phone number, amount paid, and number of tickets.
+     * Each variables are separated by commas, with entries separated by semicolons.
+     * @return
+     */
     public String getBookingDetailsForRefund(){
         //get booking
         //booking = getBooking
@@ -230,11 +276,20 @@ public class Performance {
         return details.toString();
     }
 
+    /**
+     * Sponsor this performance by setting the sponsored flag and storing the discount amount
+     * @param amount the amount to deduct from the ticket price.
+     */
     public void sponsor(double amount){
         this.isSponsored = true;
         this.sponsoredAmount = amount;
     }
 
+    /**
+     * Checks whether the given student has an active booking for this performance
+     * @param email the email of the student to check
+     * @return true if the student has an active booking, false otherwise
+     */
     //check if any booking in performance belongs to student
     public boolean checkBookedPerfByStudent(String email){
         for(Booking booking: bookings){
@@ -246,11 +301,20 @@ public class Performance {
         return false;
     }
 
+    /**
+     * Adds a rating and optional comment as a review for this performance.
+     * @param rating the rating given by the student, from 1-10
+     * @param comment an optional comment left by the student.
+     */
     public void review(int rating, String comment){
         reviewRatings.add(rating);
         reviewComments.add(comment);
     }
 
+    /**
+     * Add a booking to this performance's list of bookings.
+     * @param b the booking to add
+     */
     public void addBooking(Booking b){
         bookings.add(b);
     }

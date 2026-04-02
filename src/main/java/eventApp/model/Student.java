@@ -29,6 +29,10 @@ public class Student extends User{
         return preferences;
     }
 
+    /**
+     * Adds a booking to this student's list of bookings.
+     * @param booking the booking to add
+     */
     public void addBooking(Booking booking) {
         bookings.add(booking);
     }

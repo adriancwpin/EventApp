@@ -8,6 +8,10 @@ public class AdminStaff extends User{
         this.name = name;
     }
 
+    /**
+     * Get the name of the admin staff
+     * @return name of the admin staff
+     */
     public String getName() {
         return name;
     }
