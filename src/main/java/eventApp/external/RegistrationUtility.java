@@ -1,0 +1,25 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class RegistrationUtility {
+
+    private Map<String, String> facultyFile;
+
+    // mock file
+    public RegistrationUtility() {
+        facultyFile = new HashMap<>();
+        facultyFile.put("professor1@uni.ac.uk", "password1");
+        facultyFile.put("professor2@uni.ac.uk", "passwords2");
+    }
+
+    
+    // register
+    public FacultyMember registerFacultyMember(String email) {
+        
+        if (facultyFile.containsKey(email)) {
+            String password = facultyFile.get(email);
+            return new FacultyMember(email, password);
+        }
+        return null;
+    }
+}
