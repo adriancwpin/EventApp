@@ -183,7 +183,7 @@ public class BookingController extends Controller {
             try{
                 rating = Integer.parseInt(view.getInput("Enter rating (1-10): "));
                 if(rating < 1 || rating > 10){
-                    view.displayError(" Rating must be betweem 1 and 10");
+                    view.displayError(" Rating must be between 1 and 10");
                     rating = 0;
                     continue;
                 }

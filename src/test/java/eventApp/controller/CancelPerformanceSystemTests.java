@@ -99,7 +99,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
 
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("100");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): "))
+                .thenReturn("100").thenReturn("-1");
 
         eventPerformanceController.cancelPerformance();
 
@@ -125,7 +126,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         when(view.getInput("Enter password: ")).thenReturn("testep999");
         userController.login();
 
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("1");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): "))
+                .thenReturn("1").thenReturn("-1");
 
         eventPerformanceController.cancelPerformance();
 
@@ -163,7 +165,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         eventPerformanceController.createEvent();
 
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("1");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): "))
+                .thenReturn("1").thenReturn("-1");
 
         eventPerformanceController.cancelPerformance();
 
@@ -182,7 +185,8 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
 
         TestHelper.loginAsEP(userController, view, verificationService);
-        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): ")).thenReturn("abc");
+        when(view.getInput("Enter ID of performance to cancel (or '-1' to return): "))
+                .thenReturn("abc").thenReturn("-1");
 
         eventPerformanceController.cancelPerformance();
 
