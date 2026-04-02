@@ -15,10 +15,8 @@ class CreateEventSystemTests extends SystemInitialisation{
         TestHelper.loginAsEP(userController, view, verificationService);
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
 
-        assertNotNull(event, "Event should now be created");
-        assertEquals("Test Concert", event.getTitle(), "Event title should match");
-        assertTrue(event.isTicketed(), "Event should be ticketed");
-
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
     // Test is failing because assertNotNull is giving null
@@ -69,6 +67,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("Event title cannot be empty");
 
         // verify title is then successfully entered
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -102,6 +103,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("Invalid input. Please enter Yes or No.");
 
         // verify then successfully entered
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -135,6 +139,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("Invalid date/time format. Please use dd/MM/yyyy HH:mm format.");
 
         // verify date is then successfully entered
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -168,6 +175,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("End time must be after start time!");
 
         // verify error is fixed
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -203,6 +213,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("An event with this name has already exists at the same time!");
 
         // verify error is fixed
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event2, "Test Concert", true);
+
         verify(view, times(2)).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -241,6 +254,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("Capacity must be greater than 0.");
 
         // verify error is fixed
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -274,6 +290,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("Number of ticket must be less than venueCapacity.");
 
         // verify error is fixed
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -312,6 +331,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("Invalid input. Please enter a valid number.");
 
         // verify error is fixed
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 
@@ -354,6 +376,9 @@ class CreateEventSystemTests extends SystemInitialisation{
         verify(view).displayError("A performance already exists at this time");
 
         // verify error is fixed
+        // verify using the values created in createTestEvent
+        TestHelper.assertEventCreatedSuccess(event, "Test Concert", true);
+
         verify(view).displaySuccess("\nEvent 'Test Concert' created successfully! \n");
     }
 }

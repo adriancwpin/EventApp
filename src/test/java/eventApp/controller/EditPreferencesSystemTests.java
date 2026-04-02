@@ -1,5 +1,7 @@
 package eventApp.controller;
 
+import eventApp.model.Student;
+import eventApp.model.StudentPreferences;
 import org.junit.jupiter.api.*;
 import static org.mockito.Mockito.*;
 
@@ -24,6 +26,9 @@ class EditPreferencesSystemTests extends SystemInitialisation{
         userController.editPreferences();
 
         // verify success
+        Student student = (Student) userController.getCurrentUser();
+        TestHelper.assertPreferences(student.getPreferences(), true, false,
+                true, false, true);
         verify(view).displaySuccess("Preferences update successfully!");
     }
 
@@ -42,6 +47,9 @@ class EditPreferencesSystemTests extends SystemInitialisation{
         userController.editPreferences();
 
         // verify success
+        Student student = (Student) userController.getCurrentUser();
+        TestHelper.assertPreferences(student.getPreferences(), true, false,
+                false, false, false);
         verify(view).displaySuccess("Preferences update successfully!");
     }
 
@@ -77,7 +85,11 @@ class EditPreferencesSystemTests extends SystemInitialisation{
         // verify error is caught
         verify(view).displayError("Invalid preference! Please try again and use: " +
                         "MUSIC, THEATRE, DANCE, MOVIE, SPORTS");
-        // verify success
+
+        // verify success after fix
+        Student student = (Student) userController.getCurrentUser();
+        TestHelper.assertPreferences(student.getPreferences(), true, false,
+                true, false, true);
         verify(view).displaySuccess("Preferences update successfully!");
     }
 
@@ -99,13 +111,17 @@ class EditPreferencesSystemTests extends SystemInitialisation{
 
         // verify error is caught
         verify(view).displayError("You have already selected MUSIC!");
-        // verify success
+
+        // verify success after fix
+        Student student = (Student) userController.getCurrentUser();
+        TestHelper.assertPreferences(student.getPreferences(), true, false,
+                true, false, true);
         verify(view).displaySuccess("Preferences update successfully!");
     }
 
     // CASE 4 students enters no preferences
     @Test
-    @DisplayName("Edit fails, duplicate preferences")
+    @DisplayName("Edit fails, empty preferences")
     void testStudentEditPreferenceFailureEmptyPreferences(){
         TestHelper.loginAsStudent(userController, view);
 
@@ -119,7 +135,11 @@ class EditPreferencesSystemTests extends SystemInitialisation{
 
         // verify error is caught
         verify(view).displayError("Please select at least one preference.");
+
         // verify success
+        Student student = (Student) userController.getCurrentUser();
+        TestHelper.assertPreferences(student.getPreferences(), true, false,
+                false, false, false);
         verify(view).displaySuccess("Preferences update successfully!");
     }
 

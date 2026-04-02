@@ -93,4 +93,20 @@ public class TestHelper {
         userController.login();
     }
 
+    public static void assertEventCreatedSuccess(Event event
+            , String expectedTitle, boolean expectedTicketed){
+        assertNotNull(event, "Event should now be created");
+        assertEquals(expectedTitle, event.getTitle(), "Event title should match");
+        assertEquals(expectedTicketed, event.isTicketed(), "Event should be ticketed");
+    }
+
+    public static void assertPreferences(StudentPreferences preferences, boolean music,
+                                         boolean theatre, boolean dance, boolean movie, boolean sports){
+        assertEquals(music, preferences.preferMusicEvents);
+        assertEquals(theatre, preferences.preferTheatreEvents);
+        assertEquals(dance, preferences.preferDanceEvents);
+        assertEquals(movie, preferences.preferMovieEvents);
+        assertEquals(sports, preferences.preferSportsEvents);
+    }
+
 }

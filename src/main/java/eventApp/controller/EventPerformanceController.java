@@ -595,4 +595,8 @@ public class EventPerformanceController extends Controller{
         preferred.addAll(others);
         return preferred;
     }
+
+    public Collection<Performance> getPerformances() {
+        return performances;
+    }
 }

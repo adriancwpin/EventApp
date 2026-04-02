@@ -1,8 +1,12 @@
 package eventApp.controller;
 
+import eventApp.enums.BookingStatus;
+import eventApp.enums.PerformanceStatus;
 import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CancelPerformanceSystemTests extends SystemInitialisation{
@@ -29,6 +33,9 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         eventPerformanceController.cancelPerformance();
 
         // verify successful cancellation
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.CANCELLED, performance.getStatus());
+
         verify(view).displaySuccess("Cancellation Successful.");
     }
 
@@ -55,6 +62,12 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         eventPerformanceController.cancelPerformance();
 
         // verify successful cancellation
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.CANCELLED, performance.getStatus());
+
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.CANCELLEDBYPROVIDER, booking.getStatus());
+
         verify(view).displaySuccess("Cancellation Successful.");
     }
 
@@ -70,7 +83,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify error caught
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view).displayError("Only Entertainment Provider can cancel performance.");
     }
 
@@ -86,7 +102,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify error caught
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view).displayError("Performance with given number does not exists.");
     }
 
@@ -109,7 +128,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify error caught
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view).displayError("The performance with given number does not belong to you.");
     }
 
@@ -144,7 +166,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify error caught
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view).displayError("Performance cannot be cancelled as it has already happened.");
     }
 
@@ -160,7 +185,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify error caught
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view).displayError("Invalid ID, please enter a number.");
     }
 
@@ -181,7 +209,11 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         // verify error was caught
         verify(view).displayError("Provide a cancellation message for affected students.");
+
         // verify successful cancellation
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.CANCELLED, performance.getStatus());
+
         verify(view).displaySuccess("Cancellation Successful.");
     }
 
@@ -210,7 +242,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify error caught
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view).displayError("There was an issue with a refund." +
                 " The performance cannot be cancelled.");
     }
@@ -229,7 +264,10 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
 
         eventPerformanceController.cancelPerformance();
 
-        // verify no cancellation
+        // verify error caught and performance is not cancelled
+        Performance performance = eventPerformanceController.getPerformances().iterator().next();
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+
         verify(view, never()).displaySuccess("Cancellation Successful.");
     }
 }

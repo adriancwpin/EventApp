@@ -1,8 +1,11 @@
 package eventApp.controller;
 
+import eventApp.enums.BookingStatus;
 import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class BookPerformanceSystemTests extends SystemInitialisation{
@@ -20,7 +23,9 @@ class BookPerformanceSystemTests extends SystemInitialisation{
         TestHelper.loginAsStudent(userController, view);
         TestHelper.bookTestPerformance(bookingController, view, paymentSystem);
 
-        // verify booking is successful
+        // verify booking is successful and active
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus());
         verify(view).displaySuccess("Booking Successful");
     }
 
@@ -48,6 +53,8 @@ class BookPerformanceSystemTests extends SystemInitialisation{
         verify(view).displayError("Performance with this ID does not exists.");
 
         // verify booking is then successful
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus());
         verify(view).displaySuccess("Booking Successful");
     }
 
@@ -69,6 +76,8 @@ class BookPerformanceSystemTests extends SystemInitialisation{
         verify(view).displayError("Invalid performance ID. Please enter a valid number.");
 
         // verify booking is then successful
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus());
         verify(view).displaySuccess("Booking Successful");
     }
 
@@ -91,6 +100,8 @@ class BookPerformanceSystemTests extends SystemInitialisation{
         TestHelper.bookTestPerformance(bookingController, view, paymentSystemFailure);
 
         // verify error is caught
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.PAYMENTFAILED, booking.getStatus());
         verify(view).displayError("There was an issue with payment.");
     }
 

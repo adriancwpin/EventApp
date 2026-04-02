@@ -1,12 +1,16 @@
 package eventApp.controller;
 
+import eventApp.enums.BookingStatus;
 import eventApp.external.PaymentSystem;
 import eventApp.model.*;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CancelBookingSystemTests extends SystemInitialisation{
@@ -34,6 +38,9 @@ class CancelBookingSystemTests extends SystemInitialisation{
         bookingController.cancelBooking();
 
         // verify successful cancellation
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, booking.getStatus());
+
         verify(view).displaySuccess("Booking cancelled successfully.");
     }
     // ERROR infinite loop, same as a previous error.
@@ -56,7 +63,10 @@ class CancelBookingSystemTests extends SystemInitialisation{
 
         bookingController.cancelBooking();
 
-        // verify error is caught
+        // verify error is caught and booking is still active
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus());
+
         verify(view).displayError("Only student can cancel booking.");
     }
 
@@ -82,6 +92,8 @@ class CancelBookingSystemTests extends SystemInitialisation{
         verify(view).displayError("This booking number does not exists.");
 
         // verify successful cancellation after fix
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, booking.getStatus());
         verify(view).displaySuccess("Booking cancelled successfully.");
     }
 
@@ -108,11 +120,18 @@ class CancelBookingSystemTests extends SystemInitialisation{
 
         bookingController.cancelBooking();
 
+        // create list to verify the first booking is still active and second is cancelled
+        List<Booking> bookings = new ArrayList<>(bookingController.getBookings());
+        Booking booking0 = bookings.get(0);
+        Booking booking1 = bookings.get(1);
+
         // verify error is caught
+        assertEquals(BookingStatus.ACTIVE, booking0.getStatus());
         verify(view).displayError("This booking number does not belong" +
                 " to you. Please try again.");
 
-        // verify success after fix
+        // verify successful cancellation after fix
+        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, booking1.getStatus());
         verify(view).displaySuccess("Booking cancelled successfully.");
     }
     // ERROR test failing because student is hardcoded
@@ -142,6 +161,8 @@ class CancelBookingSystemTests extends SystemInitialisation{
                 " back to dashboard: ")).thenReturn("1").thenReturn("-1");
         bookingController.cancelBooking();
 
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, booking.getStatus());
         verify(view).displayError("This booking has been cancelled." +
                 " Sorry for the inconvenience.");
     }
@@ -170,6 +191,8 @@ class CancelBookingSystemTests extends SystemInitialisation{
                 " Please enter a valid number.");
 
         // verify successful cancellation after fix
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, booking.getStatus());
         verify(view).displaySuccess("Booking cancelled successfully.");
     }
 
@@ -213,7 +236,9 @@ class CancelBookingSystemTests extends SystemInitialisation{
 
         bookingController.cancelBooking();
 
-        // verify error is caught
+        // verify error is caught and booking is still active
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus());
         verify(view).displayError("Cancellation is not allowed." +
                 " The performance is less than 24 hours away.");
     }
@@ -243,6 +268,8 @@ class CancelBookingSystemTests extends SystemInitialisation{
         bookingController.cancelBooking();
 
         // verify error in refund
+        Booking booking = bookingController.getBookings().iterator().next();
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus());
         verify(view).displayError("Refund failed. Booking is not cancelled.");
     }
 
@@ -265,6 +292,8 @@ class CancelBookingSystemTests extends SystemInitialisation{
          bookingController.cancelBooking();
 
          // verify no cancellation
+         Booking booking = bookingController.getBookings().iterator().next();
+         assertEquals(BookingStatus.ACTIVE, booking.getStatus());
          verify(view, never()).displaySuccess("Booking cancelled successfully.");
      }
 }

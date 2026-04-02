@@ -328,4 +328,8 @@ public class BookingController extends Controller {
         }
         return null;
     }
+
+    public Collection<Booking> getBookings() {
+        return bookings;
+    }
 }
