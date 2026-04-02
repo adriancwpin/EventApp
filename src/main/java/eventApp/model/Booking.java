@@ -59,7 +59,7 @@ public class Booking {
         this.status = BookingStatus.CANCELLEDBYSTUDENT;
     }
 
-    public void cancelPaymentFailed(){}
+    public void cancelPaymentFailed(){ this.status = BookingStatus.PAYMENTFAILED; }
 
     public void cancelByProvider(){
         this.status = BookingStatus.CANCELLEDBYPROVIDER;
