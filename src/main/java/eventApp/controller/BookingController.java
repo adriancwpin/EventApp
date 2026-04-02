@@ -33,6 +33,15 @@ public class BookingController extends Controller {
     }
 
     //Methods
+
+    /**
+     * Books a performance for the logged-in students
+     * Prompts for a performance ID and number of tickets.
+     * Checks that the event is ticketed and enough tickets are available.
+     * Process payment via the payment system and updates tickets sold on success.
+     * Display an error if the performance is not found, the event is not ticketed, there are
+     * not enough tickets, or payment fails.
+     */
     public void bookPerformance(){
         Performance performance = null;
         int numTicketsReq = 0;
@@ -108,6 +117,13 @@ public class BookingController extends Controller {
         view.getInput("Press ENTER to return to dashboard... \n");
     }
 
+    /**
+     * Allows a logged-in student to leave a rating and optional comment on a performance.
+     * The student must have an active booking for the performance and it must have already taken place.
+     * Prompts for a performance ID, a rating between 1 and 10, and an optional comment.
+     * Displays an error if the performance is not found, has not happened yet,
+     * or the student did not book it.
+     */
     public void reviewPerformance(){
         //check if the current user is student
         if(!checkCurrentUserIsStudent()){
@@ -130,13 +146,13 @@ public class BookingController extends Controller {
                     return; //return back to dashboard
                 }
 
-                long performanceID = Long.parseLong(input.trim());
+                long performanceID = Long.parseLong(view.getInput(input.trim()));
                 performance = getPerformanceByID(performanceID);
 
 
                 //performance not found
                 if(performance == null){
-                    view.displayError("Couldn't find any performance with this performance ID.");
+                    view.displayError("Couldn't find any peformance with this performance ID.");
                     continue;
                 }
 
@@ -167,7 +183,7 @@ public class BookingController extends Controller {
             try{
                 rating = Integer.parseInt(view.getInput("Enter rating (1-10): "));
                 if(rating < 1 || rating > 10){
-                    view.displayError("Rating must be between 1 and 10");
+                    view.displayError(" Rating must be betweem 1 and 10");
                     rating = 0;
                     continue;
                 }
@@ -187,6 +203,13 @@ public class BookingController extends Controller {
         view.getInput("Press ENTER to return to dashboard... \n");
     }
 
+    /**
+     * Cancels an active booking for the logged-in student and processes a refund.
+     * Prompts for a booking number and checks that it belongs to the student.
+     * Cancellation is not allowed if the performance is less than 24 hours away.
+     * Display an error if the booking is not found, does not belong to the student, is already cancelled,
+     * the performance is too soon, or the refund fails.
+     */
     public void cancelBooking() {
         //has to be student
         if (!checkCurrentUserIsStudent()) {
@@ -319,9 +342,7 @@ public class BookingController extends Controller {
     }
 
     private Booking getBookingByNumber(long bookingNumber){
-        System.out.println("DEBUG - bookings size: " + bookings.size());
         for (Booking booking: bookings){
-            System.out.println("DEBUG - checking booking: " + booking.getBookingNumber());
             if(booking.getBookingNumber() == bookingNumber){
                 return booking; //found the booking
             }

@@ -65,6 +65,12 @@ public class Event {
        return p;
     }
 
+    /**
+     * Returns the specific performance based on the id
+     *
+     * @param performanceID unique identification of the performance
+     * @return the performance if the performance matches the id, null otherwise
+     */
     public Performance getPerformanceByID(long performanceID) {
         for(Performance p : performances) {
             if(p.getPerformanceID() == performanceID) {
@@ -74,12 +80,19 @@ public class Event {
         return null;
     }
 
-    public Collection<String> getInfoOfPerformancesOnDate(LocalDateTime searchtDateTime) {
+    /**
+     * Returns a collection of summary strings for all performances on the given date.
+     * Each string contains the performance details formatted for display.
+     *
+     * @param searchDateTime  date to search for performances on
+     * @return a collection of performance summary strings, empty if none found
+     */
+    public Collection<String> getInfoOfPerformancesOnDate(LocalDateTime searchDateTime) {
         Collection<String> searched = new ArrayList<>();
 
         for (Performance p : performances) {
             //check if performance is on the same date
-            if(p.getStartDateTime().toLocalDate().equals(searchtDateTime.toLocalDate())) {
+            if(p.getStartDateTime().toLocalDate().equals(searchDateTime.toLocalDate())) {
                 searched.add(p.toString());
             }
         }
@@ -90,10 +103,21 @@ public class Event {
         return organiserName;
     };
 
+    /**
+     * Returns the email of the organiser of this event.
+     *
+     * @return the organiser email
+     */
     public String getOrganiserEmail(){
         return organiserEmail;
     }
 
+    /**
+     * Calculates and returns the average rating across all reviews of all performances.
+     * Returns 0.0 if no reviews have been submitted.
+     *
+     * @return the average rating as a double
+     */
     public double getAverageRatingOfPerformances(){
         int totalRating = 0;
         int i = 0;
@@ -112,6 +136,12 @@ public class Event {
         return (double) totalRating / i;
     }
 
+    /**
+     * Returns a collection of all review strings across all performances of this event.
+     * Each string includes the performance ID, rating, and comment.
+     *
+     * @return a collection of review strings, empty if no reviews exist
+     */
     public Collection<String> getAllPerformanceReviews(){
         Collection<String> reviews = new ArrayList<>();
 
@@ -137,7 +167,15 @@ public class Event {
         }
         return false;
     }
-
+    /**
+     * Checks whether an event with the same title already has a performance at the same time.
+     * Used to prevent duplicate performances being created for the same event.
+     *
+     * @param title the title to check against
+     * @param startDateTime the start time to check
+     * @param endDateTime the end time to check
+     * @return true if the title matches and a time clash exists, false otherwise
+     */
     //helper function to check if there is any time clash within the same event -> 2 same event titles
     public boolean hasSameTitleAndTime (String title, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         //check same title

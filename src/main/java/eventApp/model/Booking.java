@@ -55,20 +55,48 @@ public class Booking {
         this.performance = performance;
     }
 
+    //Methods
+
+    /**
+     * Cancels this booking when the student requests cancellation
+     * Set the booking status to CANCELLEDBYSTUDENT.
+     */
     public void cancelByStudent(){
         this.status = BookingStatus.CANCELLEDBYSTUDENT;
     }
 
-    public void cancelPaymentFailed(){ this.status = BookingStatus.PAYMENTFAILED; }
+    /**
+     * Cancels this booking when payment fails during the booking process.
+     * Sets the booking status to CANCELLEDPAYMENTFAILED.
+     */
+    public void cancelPaymentFailed(){
+        this.status = BookingStatus.PAYMENTFAILED;
+    }
 
+    /**
+     * Cancels this booking when the Entertainment Provider cancels the performance.
+     * Sets the booking status to CANCELLEDBYPROVIDER.
+     */
     public void cancelByProvider(){
         this.status = BookingStatus.CANCELLEDBYPROVIDER;
     }
 
+    /**
+     * Checks whether this booking was made by the student with the given email.
+     *
+     * @param email the email of the student to check against
+     * @return true if the booking belongs to the student, false otherwise
+     */
     public boolean checkBookedByStudent(String email){
         return student.getEmail().equals(email);
     }
 
+    /**
+     * Returns the student's email and phone number as a string array.
+     * Returns empty strings if no student is associated with this booking.
+     *
+     * @return a string array where index 0 is the email and index 1 is the phone number
+     */
     public String[] getStudentDetails(){
         if(student == null){
             return new String[]{"", "0"};
@@ -76,6 +104,13 @@ public class Booking {
         return new String[]{student.getEmail().trim(), String.valueOf(student.getPhoneNumber()).trim()};
     }
 
+    /**
+     * Generates a formatted booking record summarising the booking details.
+     * Includes booking number, performance title, date, venue, tickets, amount paid,
+     * booking date, and current status.
+     *
+     * @return a formatted string representing the booking record
+     */
     public String generateBookingRecord() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         StringBuilder sb = new StringBuilder();
