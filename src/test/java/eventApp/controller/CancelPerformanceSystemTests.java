@@ -86,6 +86,7 @@ class CancelPerformanceSystemTests extends SystemInitialisation{
         // verify error caught and performance is not cancelled
         Performance performance = eventPerformanceController.getPerformances().iterator().next();
         assertEquals(PerformanceStatus.ACTIVE, performance.getStatus());
+        assertFalse(userController.checkCurrentUserIsEntertainmentProvider());
 
         verify(view).displayError("Only Entertainment Provider can cancel performance.");
     }

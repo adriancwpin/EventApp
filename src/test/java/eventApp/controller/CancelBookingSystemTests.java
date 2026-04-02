@@ -66,6 +66,7 @@ class CancelBookingSystemTests extends SystemInitialisation{
         // verify error is caught and booking is still active
         Booking booking = bookingController.getBookings().iterator().next();
         assertEquals(BookingStatus.ACTIVE, booking.getStatus());
+        assertFalse(userController.checkCurrentUserIsStudent());
 
         verify(view).displayError("Only student can cancel booking.");
     }

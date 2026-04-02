@@ -72,6 +72,27 @@ public class TestHelper {
         return eventPerformanceController.createEvent();
     }
 
+    public static Event createTestEventInPast(EventPerformanceController eventPerformanceController, View view){
+        when(view.getInput("\nEnter Event Title: ")).thenReturn("Test Concert");
+        when(view.getInput("Enter Choice: ")).thenReturn("1");
+        when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Yes");
+        when(view.getInput("\nNumber of performances: ")).thenReturn("1");
+        when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("01/01/2000");
+        when(view.getInput("Enter Start Time (HH:mm): ")).thenReturn("00:00");
+        when(view.getInput("Enter End Date (dd/MM/yyyy): ")).thenReturn("10/10/2000");
+        when(view.getInput("Enter End Time (HH:mm): ")).thenReturn("11:11");
+        when(view.getInput("\nEnter Venue Address: ")).thenReturn("Test address 1");
+        when(view.getInput("\nEnter Venue Capacity: ")).thenReturn("50");
+        when(view.getInput("\nIs the venue outdoor? (Yes/No): ")).thenReturn("Yes");
+        when(view.getInput("\nIs smoking allowed? (Yes/No): ")).thenReturn("Yes");
+        when(view.getInput("\nNumber of performers: ")).thenReturn("1");
+        when(view.getInput("\nEnter Performance 1 name: ")).thenReturn("The Band");
+        when(view.getInput("\nNumber of tickets: ")).thenReturn("50");
+        when(view.getInput("\nEnter Ticket Price: ")).thenReturn("5");
+        when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");
+        return eventPerformanceController.createEvent();
+    }
+
     public static void searchTestPerformances(EventPerformanceController eventPerformanceController, View view){
         when(view.getInput("\nEnter Search Date of Performance (dd/MM/yyyy): ")).thenReturn("01/01/3000");
         when(view.getInput("Press ENTER to return to dashboard...\n")).thenReturn("");

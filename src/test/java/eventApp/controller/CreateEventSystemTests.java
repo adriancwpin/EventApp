@@ -33,6 +33,7 @@ class CreateEventSystemTests extends SystemInitialisation{
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
 
         assertNull(event, "Event should not be created");
+        assertFalse(userController.checkCurrentUserIsEntertainmentProvider());
         verify(view).displayError("Only Entertainment Providers can be create events.");
     }
 
