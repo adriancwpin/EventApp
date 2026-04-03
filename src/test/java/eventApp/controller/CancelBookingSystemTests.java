@@ -66,6 +66,7 @@ class CancelBookingSystemTests extends SystemInitialisation{
         // verify error is caught and booking is still active
         Booking booking = bookingController.getBookings().iterator().next();
         assertEquals(BookingStatus.ACTIVE, booking.getStatus());
+        assertFalse(userController.checkCurrentUserIsStudent());
 
         verify(view).displayError("Only student can cancel booking.");
     }
@@ -249,7 +250,10 @@ class CancelBookingSystemTests extends SystemInitialisation{
     void testStudentCancelsBookingFailure_RefundFails(){
         PaymentSystem paymentSystemFailure = mock(PaymentSystem.class);
         when(paymentSystemFailure.processPayment(anyInt(), anyString(), anyString()
-                , anyInt(), anyString(), anyDouble())).thenReturn(false);
+                , anyInt(), anyString(), anyDouble())).thenReturn(true);
+        when(paymentSystemFailure.processRefund(anyInt(), anyString(), anyString(),
+                anyInt(), anyString(), anyDouble(), anyString())).thenReturn(false);
+
 
         bookingController = new BookingController(bookings, performances, view, paymentSystemFailure);
 

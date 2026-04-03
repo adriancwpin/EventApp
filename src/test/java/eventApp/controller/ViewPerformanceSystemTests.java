@@ -38,7 +38,8 @@ class ViewPerformanceSystemTests extends SystemInitialisation{
 
         // now user can view performance
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("\nEnter Performance ID (or '-1' to return): ")).thenReturn("5").thenReturn("1");
+        when(view.getInput("\nEnter Performance ID (or '-1' to return): "))
+                .thenReturn("5").thenReturn("1");
         when(view.getInput("\"Press ENTER to return to dashboard...\\n")).thenReturn("");
 
         eventPerformanceController.viewPerformance();
@@ -58,7 +59,8 @@ class ViewPerformanceSystemTests extends SystemInitialisation{
 
         // now user can view performance
         TestHelper.loginAsStudent(userController, view);
-        when(view.getInput("\nEnter Performance ID (or '-1' to return): ")).thenReturn("fail").thenReturn("1");
+        when(view.getInput("\nEnter Performance ID (or '-1' to return): "))
+                .thenReturn("fail").thenReturn("1");
         when(view.getInput("\"Press ENTER to return to dashboard...\\n")).thenReturn("");
 
         eventPerformanceController.viewPerformance();

@@ -40,7 +40,8 @@ public abstract class SystemInitialisation {
         paymentSystem = new MockPaymentSystem();
         userController = new UserController(users, view, verificationService);
         userController.setCurrentUser(null);
-        eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystem);
+        eventPerformanceController = new EventPerformanceController(events,
+                performances, view, paymentSystem);
         bookingController = new BookingController(bookings, performances, view, paymentSystem);
     }
 }

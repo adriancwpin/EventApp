@@ -146,13 +146,13 @@ public class BookingController extends Controller {
                     return; //return back to dashboard
                 }
 
-                long performanceID = Long.parseLong(view.getInput(input.trim()));
+                long performanceID = Long.parseLong(input.trim());
                 performance = getPerformanceByID(performanceID);
 
 
                 //performance not found
                 if(performance == null){
-                    view.displayError("Couldn't find any peformance with this performance ID.");
+                    view.displayError("Couldn't find any performance with this performance ID.");
                     continue;
                 }
 
@@ -183,7 +183,7 @@ public class BookingController extends Controller {
             try{
                 rating = Integer.parseInt(view.getInput("Enter rating (1-10): "));
                 if(rating < 1 || rating > 10){
-                    view.displayError(" Rating must be betweem 1 and 10");
+                    view.displayError("Rating must be between 1 and 10");
                     rating = 0;
                     continue;
                 }

@@ -67,7 +67,8 @@ class RegisterEntertainmentProviderSystemTests extends SystemInitialisation{
 
         // return invalid first, then valid on the second call since its a loop
         // Test case first failed by running forever when not using thenReturn twice, to get the second input
-        when(view.getInput("Enter email: ")).thenReturn("invalidemail.com").thenReturn("newep@test.com");
+        when(view.getInput("Enter email: "))
+                .thenReturn("invalidemail.com").thenReturn("newep@test.com");
 
         userController.registerEntertainmentProvider();
 

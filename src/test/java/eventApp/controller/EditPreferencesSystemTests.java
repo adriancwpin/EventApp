@@ -3,6 +3,8 @@ package eventApp.controller;
 import eventApp.model.Student;
 import eventApp.model.StudentPreferences;
 import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
 class EditPreferencesSystemTests extends SystemInitialisation{
@@ -63,6 +65,7 @@ class EditPreferencesSystemTests extends SystemInitialisation{
         userController.editPreferences();
 
         // verify failure
+        assertFalse(userController.checkCurrentUserIsStudent());
         verify(view).displayError("Only student can edit the preferences!");
     }
 

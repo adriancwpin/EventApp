@@ -33,6 +33,7 @@ class CreateEventSystemTests extends SystemInitialisation{
         Event event = TestHelper.createTestEvent(eventPerformanceController, view);
 
         assertNull(event, "Event should not be created");
+        assertFalse(userController.checkCurrentUserIsEntertainmentProvider());
         verify(view).displayError("Only Entertainment Providers can be create events.");
     }
 
@@ -81,7 +82,8 @@ class CreateEventSystemTests extends SystemInitialisation{
 
         when(view.getInput("\nEnter Event Title: ")).thenReturn("Test Concert");
         when(view.getInput("Enter Choice: ")).thenReturn("1");
-        when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Invalid").thenReturn("Yes");
+        when(view.getInput("\nIs this event ticketed? (Yes/No): "))
+                .thenReturn("Invalid").thenReturn("Yes");
         when(view.getInput("\nNumber of performances: ")).thenReturn("1");
         when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("01/01/3000");
         when(view.getInput("Enter Start Time (HH:mm): ")).thenReturn("00:00");
@@ -119,7 +121,8 @@ class CreateEventSystemTests extends SystemInitialisation{
         when(view.getInput("Enter Choice: ")).thenReturn("1");
         when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Yes");
         when(view.getInput("\nNumber of performances: ")).thenReturn("1");
-        when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("0100/01/20").thenReturn("01/01/3000");
+        when(view.getInput("Enter Start Date (dd/MM/yyyy): "))
+                .thenReturn("0100/01/20").thenReturn("01/01/3000");
         when(view.getInput("Enter Start Time (HH:mm): ")).thenReturn("00:00");
         when(view.getInput("Enter End Date (dd/MM/yyyy): ")).thenReturn("10/10/3000");
         when(view.getInput("Enter End Time (HH:mm): ")).thenReturn("11:11");
@@ -157,7 +160,8 @@ class CreateEventSystemTests extends SystemInitialisation{
         when(view.getInput("\nNumber of performances: ")).thenReturn("1");
         when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("01/01/3000");
         when(view.getInput("Enter Start Time (HH:mm): ")).thenReturn("00:00");
-        when(view.getInput("Enter End Date (dd/MM/yyyy): ")).thenReturn("10/10/2999").thenReturn("10/10/3000");
+        when(view.getInput("Enter End Date (dd/MM/yyyy): "))
+                .thenReturn("10/10/2999").thenReturn("10/10/3000");
         when(view.getInput("Enter End Time (HH:mm): ")).thenReturn("11:11");
         when(view.getInput("\nEnter Venue Address: ")).thenReturn("Test address 1");
         when(view.getInput("\nEnter Venue Capacity: ")).thenReturn("50");
@@ -193,9 +197,11 @@ class CreateEventSystemTests extends SystemInitialisation{
         when(view.getInput("Enter Choice: ")).thenReturn("1");
         when(view.getInput("\nIs this event ticketed? (Yes/No): ")).thenReturn("Yes");
         when(view.getInput("\nNumber of performances: ")).thenReturn("1");
-        when(view.getInput("Enter Start Date (dd/MM/yyyy): ")).thenReturn("01/01/3000").thenReturn("01/01/3001");
+        when(view.getInput("Enter Start Date (dd/MM/yyyy): "))
+                .thenReturn("01/01/3000").thenReturn("01/01/3001");
         when(view.getInput("Enter Start Time (HH:mm): ")).thenReturn("00:00").thenReturn("00:00");
-        when(view.getInput("Enter End Date (dd/MM/yyyy): ")).thenReturn("10/10/3000").thenReturn("10/10/3001");
+        when(view.getInput("Enter End Date (dd/MM/yyyy): "))
+                .thenReturn("10/10/3000").thenReturn("10/10/3001");
         when(view.getInput("Enter End Time (HH:mm): ")).thenReturn("11:11").thenReturn("11:11");
         when(view.getInput("\nEnter Venue Address: ")).thenReturn("Test address 1");
         when(view.getInput("\nEnter Venue Capacity: ")).thenReturn("50");
