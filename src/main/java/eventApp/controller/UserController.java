@@ -65,6 +65,7 @@ public class UserController extends Controller {
     public void logout() {
         if(currentUser == null) {
             view.displayError("No user logged in.");
+            return;
         }
 
         //set currentUser to null
@@ -76,7 +77,7 @@ public class UserController extends Controller {
     /**
      * Register a new Entertainment Provider in the system.
      *
-     * <p> Prompts the user for organisation details and validates the email format
+     * Prompts the user for organisation details and validates the email format
      * checks that the account does not exist, and verifies the business number
      * via the external verification service. If passed, then a new account is created and added
      * to the system.
@@ -124,8 +125,8 @@ public class UserController extends Controller {
         //Go through every user and check
         for(User user : users) {
             if(user instanceof EntertainmentProvider ep) {
-                if(ep.getEmail().equals(email) && ep.getOrgName().equals(orgName)
-                && ep.getBusinessNumber().equals(businessNumber)) {
+                if(ep.getEmail().equals(email) || ep.getOrgName().equals(orgName)
+                || ep.getBusinessNumber().equals(businessNumber)) {
                     return true;
                 }
             }
@@ -136,7 +137,7 @@ public class UserController extends Controller {
     /**
      * Allows a logged-in student to edit their event type preferences
      *
-     *<p> Prompt the students to select up to 3 preferred event types from:
+     *Prompt the students to select up to 3 preferred event types from:
      * MUSIC, THEATRE, DANCE, MOVIE, SPORTS. At least one preference must be selected.
      * Duplicated selections and invalid inputs are rejected.
      *
@@ -154,74 +155,76 @@ public class UserController extends Controller {
         // reset preferences
         StudentPreferences pref = student.getPreferences();
 
-        //show current preferences
-        System.out.println("\n=== Current Preferences ===");
-        System.out.println("1. Music: "   + (pref.preferMusicEvents   ? "✓" : ""));
-        System.out.println("2. Theatre: " + (pref.preferTheatreEvents ? "✓" : ""));
-        System.out.println("3. Dance: "   + (pref.preferDanceEvents   ? "✓" : ""));
-        System.out.println("4. Movie: "   + (pref.preferMovieEvents   ? "✓" : ""));
-        System.out.println("5. Sports: "  + (pref.preferSportsEvents  ? "✓" : ""));
-        System.out.println();
+        boolean update = false;
 
-        //asking for new preference
-        List<String> selectedPref = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++){
-            String input;
-            if (i == 1){
-                input = view.getInput("Enter preference " + i +
-                        " (MUSIC/THEATRE/DANCE/MOVIE/SPORTS): ");
-            } else{
-                input = view.getInput("Enter preference " + i +
-                        " (MUSIC/THEATRE/DANCE/MOVIE/SPORTS) or 'done' to finish: ");
-            }
-
-            if(input.equalsIgnoreCase("done")){
-                break;
-            }
-
-            //validate preference
-            input = input.trim().toUpperCase();
-            if (!isValidPreference(input)){
-                view.displayError("Invalid preference! Please try again and use: " +
-                        "MUSIC, THEATRE, DANCE, MOVIE, SPORTS");
-                i--; //ask again
-                continue;
-            }
-
-            //in case for duplicates
-            if(selectedPref.contains(input)){
-                view.displayError("You have already selected " + input + "!");
-                i--; // try again
-                continue;
-            }
-            selectedPref.add(input);
-        }
-
-        if(selectedPref.isEmpty()){
-            view.displayError("Please select at least one preference.");
-            editPreferences();
-            return;
-        }
-
-        //update preferences
-        boolean success = student.getPreferences().updatePreference(String.join(",", selectedPref));
-
-        if(success){
-            //show updated preferences
-            System.out.println("\n=== Updated Preferences ===");
+        //loop until something changes
+        while(!update){
+            //show current preferences
+            System.out.println("\n=== Current Preferences ===");
             System.out.println("1. Music: "   + (pref.preferMusicEvents   ? "✓" : ""));
             System.out.println("2. Theatre: " + (pref.preferTheatreEvents ? "✓" : ""));
             System.out.println("3. Dance: "   + (pref.preferDanceEvents   ? "✓" : ""));
             System.out.println("4. Movie: "   + (pref.preferMovieEvents   ? "✓" : ""));
             System.out.println("5. Sports: "  + (pref.preferSportsEvents  ? "✓" : ""));
+            System.out.println();
 
-            view.displaySuccess("Preferences update successfully!");
-        } else{
-            view.displayError("Something wrong. Please update the preferences again.");
+            //asking for new preference
+            List<String> selectedPref = new ArrayList<>();
+
+            for (int i = 1; i <= 3; i++) {
+                String input;
+                if (i == 1) {
+                    input = view.getInput("Enter preference " + i +
+                            " (MUSIC/THEATRE/DANCE/MOVIE/SPORTS): ");
+                } else {
+                    input = view.getInput("Enter preference " + i +
+                            " (MUSIC/THEATRE/DANCE/MOVIE/SPORTS) or 'done' to finish: ");
+                }
+
+                if (input.equalsIgnoreCase("done")) {
+                    break;
+                }
+
+                //validate preference
+                input = input.trim().toUpperCase();
+                if (!isValidPreference(input)) {
+                    view.displayError("Invalid preference! Please try again and use: " +
+                            "MUSIC, THEATRE, DANCE, MOVIE, SPORTS");
+                    i--; //ask again
+                    continue;
+                }
+
+                //in case for duplicates
+                if (selectedPref.contains(input)) {
+                    view.displayError("You have already selected " + input + "!");
+                    i--; // try again
+                    continue;
+                }
+                selectedPref.add(input);
+            }
+
+            if (selectedPref.isEmpty()) {
+                view.displayError("Please select at least one preference.");
+                continue;
+            }
+
+            //update preferences
+            boolean success = student.getPreferences().updatePreference(String.join(",", selectedPref));
+
+            if (success) {
+                update =  true;
+                //show updated preferences
+                System.out.println("\n=== Updated Preferences ===");
+                System.out.println("1. Music: " + (pref.preferMusicEvents ? "✓" : ""));
+                System.out.println("2. Theatre: " + (pref.preferTheatreEvents ? "✓" : ""));
+                System.out.println("3. Dance: " + (pref.preferDanceEvents ? "✓" : ""));
+                System.out.println("4. Movie: " + (pref.preferMovieEvents ? "✓" : ""));
+                System.out.println("5. Sports: " + (pref.preferSportsEvents ? "✓" : ""));
+
+                view.displaySuccess("Preferences update successfully!");
+            } else view.displayError("Something wrong. Please update the preferences again.");
         }
         view.getInput("Press ENTER to return to dashboard... \n");
-
     }
 
     //helper function for edit preference
