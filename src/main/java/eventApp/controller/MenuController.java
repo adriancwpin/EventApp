@@ -93,6 +93,9 @@ public class MenuController extends Controller {
                 userController.registerEntertainmentProvider();
                 break;
 
+            case EXIT:
+                view.displaySuccess("Thank you for using the Event App.");
+                return false; //stop the main menu loop
         }
         return true;
     }
