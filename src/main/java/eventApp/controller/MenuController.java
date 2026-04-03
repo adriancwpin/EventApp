@@ -26,6 +26,7 @@ public class MenuController extends Controller {
     private Collection<Performance>performances;
 
     public MenuController(View view, PaymentSystem paymentSystem, VerificationService verificationService){
+
         this.view = view;
 
         //initialise shared collections
@@ -34,10 +35,14 @@ public class MenuController extends Controller {
         this.bookings = new ArrayList<>();
         this.performances = new ArrayList<>();
 
+
+
         //initialise all controllers and shared resources
+
         this.userController = new UserController(users,view,verificationService);
         this.eventPerformanceController = new EventPerformanceController(events, performances, view, paymentSystem);
         this.bookingController = new BookingController(bookings, performances,view, paymentSystem);
+
     }
 
     /**

@@ -6,7 +6,7 @@ import eventApp.model.*;
 import eventApp.view.View;
 
 public abstract class Controller{
-    protected static User currentUser;
+    protected static User currentUser; //current user is stored here
     protected View view;
 
     /**

@@ -3,6 +3,9 @@ package eventApp.controller;
 import eventApp.model.*;
 import eventApp.external.*;
 import eventApp.view.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;;
 
 
@@ -13,8 +16,8 @@ import java.util.*;;
 
 public class UserController extends Controller {
     //file path constant
-    public static final String PREREGISTERED_USERS_FILE_PATH = "";
-    public static final String PREREGISTERED_ADMIN_FILE_PATH = "";
+    public static final String PREREGISTERED_USERS_FILE_PATH = "src/main/resources/preregistered_user.txt";
+    public static final String PREREGISTERED_ADMIN_FILE_PATH = "src/main/resources/preregistered_admin.txt";
 
     //shared resources based on the dependancy on class diagram
     private Collection<User> users;
@@ -241,22 +244,92 @@ public class UserController extends Controller {
     }
 
     private void addPreregisteredUsers() {
-        addUser(new Student("student@test.com", "password123", "John", 123456));
-        addUser(new Student("student2@test.com", "password999", "Jane", 999999));
-        addUser(new EntertainmentProvider(
-                "ep@test.com",              // email
-                "ep123",                    // password
-                "Music Corp",               // orgName
-                "BN12345678",               // businessNumber
-                "Smith",                    // name
-                "We organise music events"  // description
-        ));
+        readStudentFromFile();
+        readAdminFromFile();
 
-        addUser(new AdminStaff(
-                "admin@test.com",  // email
-                "admin123", // password
-                "Anasa"  // name
-        ));
+        //tests
+        //addUser(new Student("student@test.com", "password123", "John", 123456));
+        //addUser(new Student("student2@test.com", "password999", "Jane", 999999));
+        //addUser(new EntertainmentProvider(
+                //"ep@test.com",              // email
+               // "ep123",                    // password
+               // "Music Corp",               // orgName
+               // "BN12345678",               // businessNumber
+               // "Smith",                    // name
+               // "We organise music events"  // description
+        //));
+
+       // addUser(new AdminStaff(
+        //        "admin@test.com",  // email
+           //     "admin123", // password
+             //   "Anasa"  // name
+       // ));
+    }
+
+    private void readStudentFromFile() {
+        try{
+            File file = new File(PREREGISTERED_USERS_FILE_PATH);
+            Scanner scanner = new Scanner(file);
+
+            while(scanner.hasNextLine()){
+                String line = scanner.nextLine().trim();
+
+                //skip empty line
+                while(line.isEmpty()){
+                    continue;
+                }
+
+                String[] split = line.split(",");
+
+                //validate correct format
+                if(split.length != 4){
+                    view.displayError("Invalid student format: " + line);
+                    continue;
+                }
+
+                String email = split[0].trim();
+                String password = split[1].trim();
+                String name = split[2].trim();
+                int phone = Integer.parseInt(split[3].trim());
+
+                addUser(new Student(email, password, name, phone));
+            }
+            scanner.close();
+        }catch(FileNotFoundException e){
+            view.displayError("Student file not found: "+ PREREGISTERED_USERS_FILE_PATH);
+        }catch(NumberFormatException e){
+            view.displayError("Invalid phone number format in student file");
+        }
+    }
+
+    private void readAdminFromFile() {
+        try{
+            File file = new File(PREREGISTERED_ADMIN_FILE_PATH);
+            Scanner scanner = new Scanner(file);
+
+            while(scanner.hasNextLine()){
+                String line = scanner.nextLine().trim();
+
+                while(line.isEmpty()){
+                    continue;
+                }
+
+                String[] split = line.split(",");
+                if(split.length != 3){
+                    view.displayError("Invalid admin format: " + line);
+                    continue;
+                }
+
+                String email = split[0].trim();
+                String password = split[1].trim();
+                String name = split[2].trim();
+
+                addUser(new AdminStaff(email, password, name));
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            view.displayError("Admin file not found: "+ PREREGISTERED_ADMIN_FILE_PATH);
+        }
     }
 
 
