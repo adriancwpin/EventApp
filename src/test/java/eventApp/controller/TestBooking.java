@@ -122,10 +122,21 @@ class TestBooking {
                 "Return false when there is a null email");
     }
 
+    //cancelByStudent get overrides by cancelByProvider
+    @Test
+    @DisplayName("CancelledByProvider overides CancelledByStudent")
+    void cancelByProviderOverides() {
+        booking.cancelByStudent();
+        booking.cancelByProvider();
+
+        assertEquals(BookingStatus.CANCELLEDBYPROVIDER , booking.getStatus(),
+                "cancelByProvider overides CancelledByStudent");
+    }
+
     //getStudentDetails
     @Test
     @DisplayName("getStudentDetails return correct email at index 0")
-    void getStudentDetailsCorrectEmail() {
+    void getStudentDetailsCorrectEmailForStudent1() {
         String[] details = booking.getStudentDetails();
         assertEquals("student@test.com", details[0],
                 "Email has to be at index 0");
@@ -133,10 +144,26 @@ class TestBooking {
 
     @Test
     @DisplayName("getStudentDetails return phone number at index 1")
-    void getStudentDetailsCorrectPhoneNumber() {
+    void getStudentDetailsCorrectPhoneNumberForStudent1() {
         String[] details = booking.getStudentDetails();
         assertEquals("1234567890", details[1],
                 "Phone number has to be at index 1");
+    }
+
+    @Test
+    @DisplayName("getStudentDetails returns correct email for student2")
+    void getStudentDetailsCorrectEmailForStudent2(){
+        booking.setStudent(student2);
+        String[] details = booking.getStudentDetails();
+        assertEquals("abc@test.com", details[0], "Email should match student2");
+    }
+
+    @Test
+    @DisplayName("getStudentDetails returns correct phone number for student2")
+    void getStudentDetailsCorrectPhoneNumberForStudent2(){
+        booking.setStudent(student2);
+        String[] details = booking.getStudentDetails();
+        assertEquals("1243567898", details[1], "Phone number should match student2");
     }
 
     @Test
@@ -148,26 +175,23 @@ class TestBooking {
     }
 
     @Test
-    @DisplayName("getStudentDetails returns empty string when no student is set")
-    void getStudentDetailsEmptyString(){
+    @DisplayName("getStudentDetails returns empty email when no student is set")
+    void getStudentDetailsEmptyEmail(){
         //create a new booking object where no student book
         Booking noStudent = new Booking(2, 1243, 1.00, LocalDateTime.now());
         String[] details = noStudent.getStudentDetails();
         assertEquals("", details[0],
                 "Student email has to be empty string");
-        assertEquals("0", details[1],
-                "Phone number has to be 0");
     }
 
     @Test
-    @DisplayName("getStudentDetails return correct details for students")
-    void getStudentDetailsCorrectDetails(){
-        booking.setStudent(student2);
-        String[] details = booking.getStudentDetails();
-        assertEquals("abc@test.com", details[0],
-                "Email should match student2");
-        assertEquals("1243567898" , details[1],
-                "Phone number should match student2");
+    @DisplayName("getStudentDetails return 0 for phone number when no student is set")
+    void getStudentDetailsEmptyPhoneNumber(){
+        //create a new booking object where no student book
+        Booking noStudent = new Booking(2, 1243, 1.00, LocalDateTime.now());
+        String[] details = noStudent.getStudentDetails();
+        assertEquals("0", details[1],
+                "Student phone number has to be 0");
     }
 
     //generateBookingNumber
