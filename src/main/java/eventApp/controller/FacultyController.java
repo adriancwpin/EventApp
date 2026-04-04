@@ -29,8 +29,8 @@ public class AuthService {
         }
 
         // 3. Check password for existing user
-        return user.getPassword().equals(password);
-} //this bracket isnt working lol
+            return user.getPassword().equals(password);
+         //this bracket isn't working lol
 
     private User findUserByEmail(String email) {
         for (User u : users) {
