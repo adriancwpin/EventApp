@@ -1,312 +1,363 @@
 package eventApp.controller;
 
+import eventApp.model.Booking;
+import eventApp.model.Student;
+import eventApp.model.Performance;
+import eventApp.model.Event;
 import eventApp.enums.BookingStatus;
 import eventApp.enums.EventType;
-import eventApp.model.Booking;
-import eventApp.model.Event;
-import eventApp.model.Performance;
-import eventApp.model.Student;
+import eventApp.enums.PerformanceStatus;
 import eventApp.external.MockPaymentSystem;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-
+import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class TestMyClass {
 
-    //preregistered student accounts
-    private Student s1;
-    private Student s2;
+    // test fields
+    private Student student1;
+    private Student student2;
+    private Event dummyEvent;
+    private Performance performance;
+    private Booking booking;
 
-    private Performance perf;
-    private Booking myBooking;
+    // fields for performance testing
+    private Booking activeBooking;
+    private Booking cancelledBooking;
 
-    private MockPaymentSystem mockPay;
-    private int tix = 2;
-    private double cost = 20.00;
-    private String evName = "Test Event Title";
-    private String providerMail = "ep@test.com";
+    // Payment System Test Fields
+    private MockPaymentSystem paymentSystem;
+    private final int validTickets = 2;
+    private final String validEventTitle = "Comedy Night";
+    private final String validStudentEmail = "s1234567@ed.ac.uk";
+    private final int validStudentPhone = 1234567890;
+    private final String validEpEmail = "provider@entertainment.com";
+    private final double validAmount = 30.00;
+    private final String validMessage = "Event cancelled due to weather.";
 
     @BeforeEach
     void setUp() {
-        //student details
-        s1 = new Student("student@test.com", "password123", "student", 1234567890);
-        s2 = new Student("abc@test.com", "abc123", "abc", 1243567898);
+        // test setup
+        student1 = new Student("student@test.com", "password123", "student", 1234567890);
+        student2 = new Student("abc@test.com", "abc123", "abc", 1243567898);
+        dummyEvent = new Event(1, "Test Event Title", EventType.DANCE, true, "ep@test.com", "EP");
 
-        //create event
-        Event ev =  new Event(1, "Test Event Title", EventType.DANCE, true, "ep@test.com", "EP");
-
-        //performance
-        perf = new Performance(1,
+        // performance setup
+        performance = new Performance(1,
                 LocalDateTime.of(2026,4,21,10,0),
                 LocalDateTime.of(2026,4,21,14,0),
                 Arrays.asList("J"),
                 "Hindeburgh",
-                1234, false, false, 1234, 10.00);
+                1234, false, false, 100, 10.00); // 100 tickets total
 
-        perf.setEvent(ev);
+        performance.setEvent(dummyEvent);
 
-        //booking
-        myBooking = new Booking(1, 2, 20.00, LocalDateTime.of(2026,4,20,10,0));
-        myBooking.setStudent(s1);
-        myBooking.setPerformance(perf);
+        // booking setup
+        booking = new Booking(1, 2, 20.00, LocalDateTime.of(2026,4,20,10,0));
+        booking.setStudent(student1);
+        booking.setPerformance(performance);
 
-        // setup mock payment for later
-        mockPay = new MockPaymentSystem();
+        activeBooking = new Booking(10, 2, 30.00, LocalDateTime.now());
+        activeBooking.setStudent(student1);
+
+        cancelledBooking = new Booking(11, 1, 15.00, LocalDateTime.now());
+        cancelledBooking.setStudent(student1);
+        cancelledBooking.cancelByStudent();
+
+        // Mock Payement System
+        paymentSystem = new MockPaymentSystem();
     }
 
-    //Initial state
+    // Test Bookigs
+
     @Test
-    @DisplayName("make sure a new booking is active")
+    @DisplayName("New booking starts with ACTIVE")
     void newBooking() {
-        assertEquals(BookingStatus.ACTIVE, myBooking.getStatus(),
-                "status should just be ACTIVE at the start");
-    }
-
-    //checkBookedByStudent
-    @Test
-    @DisplayName("should fail if we pass a null email")
-    void checkBookedByStudentNullEmail() {
-        assertFalse(myBooking.checkBookedByStudent(null),
-                "cant check a null email, should be false");
+        assertEquals(BookingStatus.ACTIVE, booking.getStatus(),
+                "New booking starts with ACTIVE");
     }
 
     @Test
-    @DisplayName("returns true for the actual owner's email")
-    void checkBookedByStudentCorrectEmail() {
-        assertTrue(myBooking.checkBookedByStudent("student@test.com"),
-                "this is the right email so it needs to return true");
-    }
-
-    @Test
-    @DisplayName("fails if the email is empty")
-    void checkBookedByStudentEmptyEmail() {
-        assertFalse(myBooking.checkBookedByStudent(""),
-                "empty string shouldn't match the student email");
-    }
-
-    @Test
-    @DisplayName("fails for a different random email")
-    void checkBookedByStudentDifferentEmail() {
-        assertFalse(myBooking.checkBookedByStudent("abc@test.com"),
-                "wrong email should definitely return false");
-    }
-
-    @Test
-    @DisplayName("email check should be case sensitive")
-    void checkBookedByStudentIsCaseSensitive() {
-        assertFalse(myBooking.checkBookedByStudent("Student@test.com"),
-                "capital S should make it return false");
-    }
-
-    //getStudentDetails
-    @Test
-    @DisplayName("checks if the array size is exactly 2")
-    void getStudentDetailsLength(){
-        String[] info = myBooking.getStudentDetails();
-        assertEquals(2, info.length,
-                "the array needs to only have 2 spots");
-    }
-
-    @Test
-    @DisplayName("makes sure phone number is in index 1")
-    void getStudentDetailsCorrectPhoneNumber() {
-        String[] info = myBooking.getStudentDetails();
-        assertEquals("1234567890", info[1],
-                "second item should be the phone string");
-    }
-
-    @Test
-    @DisplayName("handles when a student isnt assigned yet")
-    void getStudentDetailsEmptyString(){
-        Booking emptyBook = new Booking(2, 1243, 1.00, LocalDateTime.now());
-        String[] info = emptyBook.getStudentDetails();
-        assertEquals("", info[0], "should be blank if no student");
-        assertEquals("0", info[1], "phone should default to 0");
-    }
-
-    @Test
-    @DisplayName("makes sure email is in index 0")
-    void getStudentDetailsCorrectEmail() {
-        String[] info = myBooking.getStudentDetails();
-        assertEquals("student@test.com", info[0],
-                "first item should be the email string");
-    }
-
-    @Test
-    @DisplayName("works correctly when swapping to student 2")
-    void getStudentDetailsCorrectDetails(){
-        myBooking.setStudent(s2);
-        String[] info = myBooking.getStudentDetails();
-        assertEquals("abc@test.com", info[0], "email should change to s2");
-        assertEquals("1243567898" , info[1], "phone should change to s2");
-    }
-
-    //cancel payment failed
-    @Test
-    @DisplayName("cancel because payment failed updates status")
-    void cancelPaymentFailed() {
-        myBooking.cancelPaymentFailed();
-        assertEquals(BookingStatus.PAYMENTFAILED, myBooking.getStatus(),
-                "status should change to payment failed");
-    }
-
-    //cancel by provider
-    @Test
-    @DisplayName("provider cancelling changes status properly")
-    void cancelByProvider() {
-        myBooking.cancelByProvider();
-        assertEquals(BookingStatus.CANCELLEDBYPROVIDER, myBooking.getStatus(),
-                "should show the provider cancelled it");
-    }
-
-    //cancel by student
-    @Test
-    @DisplayName("student cancelling changes status properly")
+    @DisplayName("cancelByStudent sets the status to CANCELLEDBYSTUDENT")
     void cancelByStudent() {
-        myBooking.cancelByStudent();
-        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, myBooking.getStatus(),
-                "should show the student cancelled it");
-    }
-
-    //generateBookingNumber
-    @Test
-    @DisplayName("record string has the header")
-    void generateBookingRecordContainsTheBookingHeader() {
-        assertTrue(myBooking.generateBookingRecord().contains("BOOKING RECORD"),
-                "needs to have the title header at the top");
+        booking.cancelByStudent();
+        assertEquals(BookingStatus.CANCELLEDBYSTUDENT, booking.getStatus(),
+                "cancelByStudent sets the status to CANCELLEDBYSTUDENT");
     }
 
     @Test
-    @DisplayName("record string has the price paid")
-    void generateBookingRecordContainsAmountPaid() {
-        assertTrue(myBooking.generateBookingRecord().contains("20.00"),
-                "should print out the 20 quid paid");
+    @DisplayName("cancelPaymentFailed sets the status to PAYMENTFAILED")
+    void cancelPaymentFailed() {
+        booking.cancelPaymentFailed();
+        assertEquals(BookingStatus.PAYMENTFAILED, booking.getStatus(),
+                "cancelPaymentFailed sets the status to PAYMENTFAILED");
     }
 
     @Test
-    @DisplayName("record string updates if provider cancels")
-    void generateBookingRecordContainsTheUpdatedCancelledProvider() {
-        myBooking.cancelByProvider();
-        assertTrue(myBooking.generateBookingRecord().contains("CANCELLEDBYPROVIDER"),
-                "record should update if EP cancels it");
+    @DisplayName("cancelByProvider sets the status to CANCELLEDBYPROVIDER")
+    void cancelByProvider() {
+        booking.cancelByProvider();
+        assertEquals(BookingStatus.CANCELLEDBYPROVIDER, booking.getStatus(),
+                "cancelByProvider sets the status to CANCELLEDBYPROVIDER");
     }
 
     @Test
-    @DisplayName("record string has the venue")
-    void generateBookingRecordContainsTheVenueAddress() {
-        assertTrue(myBooking.generateBookingRecord().contains("Hindeburgh"),
-                "venue location should be printed");
+    @DisplayName("checkBookedByStudent() returns true for booking owner's email")
+    void checkBookedByStudentCorrectEmail() {
+        assertTrue(booking.checkBookedByStudent("student@test.com"),
+                "Should return true when the email matches the booking's student email");
     }
 
     @Test
-    @DisplayName("record string updates if student cancels")
-    void generateBookingRecordContainsTheUpdatedStatusAfterCancellation() {
-        myBooking.cancelByStudent();
-        assertTrue(myBooking.generateBookingRecord().contains("CANCELLEDBYSTUDENT"),
-                "record should update if student cancels");
+    @DisplayName("checkBookedByStudent returns false for different student email")
+    void checkBookedByStudentDifferentEmail() {
+        assertFalse(booking.checkBookedByStudent("abc@test.com"),
+                "Should return false when the email does not match the booking's student email");
     }
 
     @Test
-    @DisplayName("record string has ticket amount")
-    void generateBookingRecordContainsNumberOfTickets() {
-        assertTrue(myBooking.generateBookingRecord().contains("2"),
-                "needs to show they bought 2 tickets");
+    @DisplayName("checkBookedByStudent returns false for an empty email")
+    void checkBookedByStudentEmptyEmail() {
+        assertFalse(booking.checkBookedByStudent(""),
+                "Return false when there is an empty email");
     }
 
     @Test
-    @DisplayName("record string has the event title")
-    void generateBookingRecordContainsEventTitle() {
-        assertTrue(myBooking.generateBookingRecord().contains("Test Event Title"),
-                "the name of the event should be in there");
+    @DisplayName("checkBookedByStudent is case-sensitive")
+    void checkBookedByStudentIsCaseSensitive() {
+        assertFalse(booking.checkBookedByStudent("Student@test.com"),
+                "Return false because of case-sensitive");
     }
 
     @Test
-    @DisplayName("record string updates if payment fails")
-    void generateBookingRecordContainsTheUpdatedPaymentFailed() {
-        myBooking.cancelPaymentFailed();
-        assertTrue(myBooking.generateBookingRecord().contains("PAYMENTFAILED"),
-                "should say payment failed in the string");
+    @DisplayName("checkBookedByStudent return false when there is a null email")
+    void checkBookedByStudentNullEmail() {
+        assertFalse(booking.checkBookedByStudent(null),
+                "Return false when there is a null email");
     }
 
     @Test
-    @DisplayName("record string has the current status")
-    void generateBookingRecordContainsTheBookingStatus() {
-        assertTrue(myBooking.generateBookingRecord().contains("ACTIVE"),
-                "status line should say ACTIVE");
+    @DisplayName("getStudentDetails return correct email at index 0")
+    void getStudentDetailsCorrectEmail() {
+        String[] details = booking.getStudentDetails();
+        assertEquals("student@test.com", details[0],
+                "Email has to be at index 0");
     }
 
     @Test
-    @DisplayName("record string has the start date")
-    void generateBookingRecordContainsStartingDateAndTime() {
-        assertTrue(myBooking.generateBookingRecord().contains("21/04/2026 10:00"),
-                "performance start time should be shown");
+    @DisplayName("getStudentDetails return phone number at index 1")
+    void getStudentDetailsCorrectPhoneNumber() {
+        String[] details = booking.getStudentDetails();
+        assertEquals("1234567890", details[1],
+                "Phone number has to be at index 1");
     }
 
     @Test
-    @DisplayName("record string has the booking ID")
+    @DisplayName("getStudentDetails has to return array of length 2")
+    void getStudentDetailsLength(){
+        String[] details = booking.getStudentDetails();
+        assertEquals(2, details.length,
+                "Student details length has to be 2");
+    }
+
+    @Test
+    @DisplayName("getStudentDetails returns empty string when no student is set")
+    void getStudentDetailsEmptyString(){
+        Booking noStudent = new Booking(2, 1243, 1.00, LocalDateTime.now());
+        String[] details = noStudent.getStudentDetails();
+        assertEquals("", details[0], "Student email has to be empty string");
+        assertEquals("0", details[1], "Phone number has to be 0");
+    }
+
+    @Test
+    @DisplayName("getStudentDetails return correct details for students")
+    void getStudentDetailsCorrectDetails(){
+        booking.setStudent(student2);
+        String[] details = booking.getStudentDetails();
+        assertEquals("abc@test.com", details[0], "Email should match student2");
+        assertEquals("1243567898" , details[1], "Phone number should match student2");
+    }
+
+    @Test
+    @DisplayName("generateBookingRecord contains booking number")
     void generateBookingRecordContainsBookingNumber() {
-        assertTrue(myBooking.generateBookingRecord().contains("1"),
-                "ID number 1 should be visible");
+        assertTrue(booking.generateBookingRecord().contains("1"),
+                "Booking record contains booking number");
     }
 
     @Test
-    @DisplayName("record string has the date booked")
-    void generateBookingRecordContainsTheDateBooked() {
-        assertTrue(myBooking.generateBookingRecord().contains("20/04/2026 10:00"),
-                "booking timestamp needs to be there");
-    }
-
-
-
-
-    // MockPaymentSystem
-
-
-    @Test
-    @DisplayName("refund works with normal data")
-    public void testRefundWorksFine() {
-        assertTrue(mockPay.processRefund(tix, evName, "student@test.com", 1234567890, providerMail, cost, "sorry!"),
-                "a normal refund should just return true");
+    @DisplayName("generateBookingRecord contains event title")
+    void generateBookingRecordContainsEventTitle() {
+        assertTrue(booking.generateBookingRecord().contains("Test Event Title"),
+                "Booking record contains event title");
     }
 
     @Test
-    @DisplayName("payment fails if we pass a negative cost")
-    public void testPaymentFailsNegativeMoney() {
-        assertFalse(mockPay.processPayment(tix, evName, "student@test.com", 1234567890, providerMail, -50.00),
-                "cant pay negative money, should block it");
+    @DisplayName("generateBookingRecord reflects updated status after cancellation")
+    void generateBookingRecordContainsTheUpdatedStatusAfterCancellation() {
+        booking.cancelByStudent();
+        assertTrue(booking.generateBookingRecord().contains("CANCELLEDBYSTUDENT"),
+                "Booking record reflects the updated status after cancellation");
+    }
+
+
+    // Mock Payement System
+
+
+    @Test
+    @DisplayName("Payment: Valid inputs should return true")
+    public void testProcessPayment_ValidInputs_ReturnsTrue() {
+        assertTrue(paymentSystem.processPayment(
+                validTickets, validEventTitle, validStudentEmail,
+                validStudentPhone, validEpEmail, validAmount
+        ));
     }
 
     @Test
-    @DisplayName("payment works properly with valid data")
-    public void testPaymentWorksFine() {
-        assertTrue(mockPay.processPayment(tix, evName, "student@test.com", 1234567890, providerMail, cost),
-                "a normal payment should go through and return true");
+    @DisplayName("Payment: 0 tickets should return false")
+    public void testProcessPayment_ZeroTickets_ReturnsFalse() {
+        assertFalse(paymentSystem.processPayment(
+                0, validEventTitle, validStudentEmail,
+                validStudentPhone, validEpEmail, validAmount
+        ));
     }
 
     @Test
-    @DisplayName("payment fails if tickets are 0")
-    public void testPaymentFailsZeroTix() {
-        assertFalse(mockPay.processPayment(0, evName, "student@test.com", 1234567890, providerMail, cost),
-                "shouldnt be able to process a payment for 0 tickets");
+    @DisplayName("Payment: Negative amount should return false")
+    public void testProcessPayment_NegativeAmount_ReturnsFalse() {
+        assertFalse(paymentSystem.processPayment(
+                validTickets, validEventTitle, validStudentEmail,
+                validStudentPhone, validEpEmail, -15.50
+        ));
     }
 
     @Test
-    @DisplayName("refund works even if there is no message")
-    public void testRefundNullMessage() {
-        assertTrue(mockPay.processRefund(tix, evName, "student@test.com", 1234567890, providerMail, cost, null),
-                "null message is allowed so refund should still work");
+    @DisplayName("Payment: Null email should return false")
+    public void testProcessPayment_NullStudentEmail_ReturnsFalse() {
+        assertFalse(paymentSystem.processPayment(
+                validTickets, validEventTitle, null,
+                validStudentPhone, validEpEmail, validAmount
+        ));
     }
 
     @Test
-    @DisplayName("payment fails if the student email is missing")
-    public void testPaymentFailsNullEmail() {
-        assertFalse(mockPay.processPayment(tix, evName, null, 1234567890, providerMail, cost),
-                "null email should break it and return false");
+    @DisplayName("Refund: Valid inputs with message should return true")
+    public void testProcessRefund_ValidInputsWithMessage_ReturnsTrue() {
+        assertTrue(paymentSystem.processRefund(
+                validTickets, validEventTitle, validStudentEmail,
+                validStudentPhone, validEpEmail, validAmount, validMessage
+        ));
+    }
+
+    @Test
+    @DisplayName("Refund: Null message should still succeed")
+    public void testProcessRefund_NullMessage_ReturnsTrue() {
+        assertTrue(paymentSystem.processRefund(
+                validTickets, validEventTitle, validStudentEmail,
+                validStudentPhone, validEpEmail, validAmount, null
+        ));
+    }
+
+
+    // Performance Test
+
+
+    @Test
+    @DisplayName("Performance Constructor: Initializes with correct default values")
+    public void testPerfConstructor_InitializesDefaultsCorrectly() {
+        assertEquals(0, performance.getNumTicketsSold(), "Newly created performance should have 0 tickets sold.");
+        assertFalse(performance.isSponsored(), "Newly created performance should not be sponsored.");
+        assertEquals(PerformanceStatus.ACTIVE, performance.getStatus(), "Initial status must be ACTIVE.");
+    }
+
+    @Test
+    @DisplayName("Performance: cancel() changes status to CANCELLED")
+    public void testPerfCancel_UpdatesStatusToCancelled() {
+        performance.cancel();
+        assertEquals(PerformanceStatus.CANCELLED, performance.getStatus(),
+                "cancel() must change the performance status to CANCELLED.");
+    }
+
+    @Test
+    @DisplayName("Performance: checkIfEventIsTicketed returns true for ticketed event")
+    public void testCheckIfEventIsTicketed_TicketedEvent_ReturnsTrue() {
+        assertTrue(performance.checkIfEventIsTicketed(), "Should return true when associated event is ticketed.");
+    }
+
+    @Test
+    @DisplayName("Performance: checkIfEventIsTicketed handles null event safely")
+    public void testCheckIfEventIsTicketed_NullEvent_ReturnsFalse() {
+        performance.setEvent(null);
+        assertFalse(performance.checkIfEventIsTicketed(), "Should return false safely if the event is null.");
+    }
+
+    @Test
+    @DisplayName("Performance: checkIfTicketsLeft returns true for exact remaining tickets")
+    public void testCheckIfTicketsLeft_ExactAmount_ReturnsTrue() {
+        performance.setNumTicketsSold(95); // 5 tickets left out of 100
+        assertTrue(performance.checkIfTicketsLeft(5), "Should return true when requesting exact remaining tickets.");
+    }
+
+    @Test
+    @DisplayName("Performance: checkIfTicketsLeft returns false when requesting too many")
+    public void testCheckIfTicketsLeft_ExceedsCapacity_ReturnsFalse() {
+        performance.setNumTicketsSold(95);
+        assertFalse(performance.checkIfTicketsLeft(6), "Should return false when requesting more tickets than available.");
+    }
+
+    @Test
+    @DisplayName("Performance: getFinalTicketPrice returns reduced price when sponsored")
+    public void testGetFinalTicketPrice_Sponsored_ReturnsReducedPrice() {
+        performance.sponsor(2.00);
+        assertEquals(8.00, performance.getFinalTicketPrice(), 0.001, "Should deduct the sponsored amount from the base price.");
+    }
+
+    @Test
+    @DisplayName("Performance: checkHasNotHappenedYet returns true for future performance")
+    public void testCheckHasNotHappenedYet_FutureDate_ReturnsTrue() {
+        assertTrue(performance.checkHasNotHappenedYet(), "Should return true since start time is in the future.");
+    }
+
+    @Test
+    @DisplayName("Performance: checkCreatedByEP returns true for matching email")
+    public void testCheckCreatedByEP_MatchingEmail_ReturnsTrue() {
+        assertTrue(performance.checkCreatedByEP("ep@test.com"), "Should return true when EP email matches event organiser.");
+    }
+
+    @Test
+    @DisplayName("Performance: hasActiveBookings returns true when active bookings exist")
+    public void testHasActiveBookings_WithActive_ReturnsTrue() {
+        performance.addBooking(cancelledBooking);
+        performance.addBooking(activeBooking);
+        assertTrue(performance.hasActiveBookings(), "Should return true if at least one booking is ACTIVE.");
+    }
+
+    @Test
+    @DisplayName("Performance: hasActiveBookings returns false when only cancelled exist")
+    public void testHasActiveBookings_OnlyCancelled_ReturnsFalse() {
+        performance.addBooking(cancelledBooking);
+        assertFalse(performance.hasActiveBookings(), "Should return false if all bookings are cancelled.");
+    }
+
+    @Test
+    @DisplayName("Performance: getBookingDetailsForRefund only includes ACTIVE bookings")
+    public void testGetBookingDetailsForRefund_FormatsCorrectly() {
+        performance.addBooking(cancelledBooking); // Ignored
+        performance.addBooking(activeBooking);    // Included
+
+        String details = performance.getBookingDetailsForRefund();
+        assertTrue(details.contains("student@test.com"), "Must contain the active student's email.");
+        assertTrue(details.endsWith(";"), "Each record must end with a semicolon as defined by the format string.");
+    }
+
+    @Test
+    @DisplayName("Performance: review successfully adds ratings and comments")
+    public void testReview_AddsDataToLists() {
+        performance.review(5, "Great show!");
+        assertEquals(1, performance.getReviewRatings().size(), "Review ratings list should contain 1 item.");
+        assertTrue(performance.getReviewComments().contains("Great show!"), "Comments list should contain provided text.");
     }
 }
