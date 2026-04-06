@@ -204,7 +204,7 @@ public class TestMyClass {
     }
 
 
-    // Mock Payement System
+    // Mock Payment System
 
 
     @Test
