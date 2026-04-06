@@ -222,7 +222,7 @@ public class BookingController extends Controller {
 
         while (booking == null) {
             try {
-                String input = view.getInput("Enter Booking Number (or '-1' to return back to dashboard: ");
+                String input = view.getInput("Enter Booking Number (or '-1' to return back to dashboard): ");
 
                 if(input.trim().equals("-1")){
                     return;
