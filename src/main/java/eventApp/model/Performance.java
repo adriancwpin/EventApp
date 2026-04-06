@@ -264,11 +264,12 @@ public class Performance {
                 String[] studentDetails = booking.getStudentDetails();
                 String studentEmail = studentDetails[0];
                 int studentPhone = Integer.parseInt(studentDetails[1]);
+                String formatted = String.format("%.2f", booking.getAmountPaid());
 
                 //append all the booking details
                 details.append(studentEmail).append(",")
                         .append(studentPhone).append(",")
-                        .append(booking.getAmountPaid()).append(",")
+                        .append(formatted).append(",")
                         .append(booking.getNumTickets()).append(";");
             }
         }
